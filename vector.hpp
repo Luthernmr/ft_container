@@ -244,7 +244,12 @@ namespace ft
 			void					push_back(const_reference value)
 			{
 				if (_size == _capacity)
-					reserve(_capacity ? _capacity * 2 : 1);
+				{
+					if (_capacity)
+						reserve(_capacity * 2);
+					else
+						reserve(1);
+				}
 				_myAlloc.construct((_array + _size++), value);
 			}
 			void					pop_back()
@@ -295,9 +300,6 @@ namespace ft
 				_myAlloc = tmpAlloc;
 			}
 			/* -------------------------------- Allocator ------------------------------- */
-			
-			
-			/* ------------------------ Template specializations ------------------------ */
 	};
 		/* ---------------------- Non-member function overloads --------------------- */
 		template< class T, class Alloc >

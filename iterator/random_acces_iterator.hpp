@@ -4,15 +4,15 @@
 
 namespace ft
 {
-	template<class T>
-	class random_access_iterator : public iterator<std::random_access_iterator_tag, T>
+	template<class I>
+	class random_access_iterator : public iterator<std::random_access_iterator_tag, I>
 	{
 		public : 
-			typedef typename ft::iterator<std::random_access_iterator_tag, T>::difference_type		difference_type;
-			typedef typename ft::iterator<std::random_access_iterator_tag, T>::value_type			value_type;
-			typedef typename ft::iterator<std::random_access_iterator_tag, T>::pointer				pointer;
-			typedef typename ft::iterator<std::random_access_iterator_tag, T>::reference			reference;
-			typedef typename ft::iterator<std::random_access_iterator_tag, T>::iterator_category	iterator_category;
+			typedef typename ft::iterator<std::random_access_iterator_tag, I>::difference_type		difference_type;
+			typedef typename ft::iterator<std::random_access_iterator_tag, I>::value_type			value_type;
+			typedef typename ft::iterator<std::random_access_iterator_tag, I>::pointer				pointer;
+			typedef typename ft::iterator<std::random_access_iterator_tag, I>::reference			reference;
+			typedef typename ft::iterator<std::random_access_iterator_tag, I>::iterator_category	iterator_category;
 		
 		private:
 			pointer	_pointer;
@@ -32,7 +32,7 @@ namespace ft
 			}
 			~random_access_iterator(){};
 
-			operator random_access_iterator<const T> () const  { return (random_access_iterator<const T>(this->_pointer)); }
+			operator random_access_iterator<const I> () const  { return (random_access_iterator<const I>(this->_pointer)); }
 		
 		/* -------------------------- Increment/ Decrement -------------------------- */
 		random_access_iterator& operator++( void ) { _pointer++; return(*this); }
@@ -51,12 +51,12 @@ namespace ft
 		}
 
 		/* --------------------------------- Compare -------------------------------- */
-		friend bool	operator==(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) 	{return (lhs._pointer == rhs._pointer);}
-		friend bool	operator!=(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) 	{return (lhs._pointer != rhs._pointer);}
-		friend bool	operator>(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) 	{return (lhs._pointer > rhs._pointer);}
-		friend bool	operator<(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) 	{return (lhs._pointer < rhs._pointer);}
-		friend bool	operator>=(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) 	{return (lhs._pointer >= rhs._pointer);}
-		friend bool	operator<=(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) 	{return (lhs._pointer <= rhs._pointer);}
+		friend bool	operator==(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer == rhs._pointer);}
+		friend bool	operator!=(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer != rhs._pointer);}
+		friend bool	operator>(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer > rhs._pointer);}
+		friend bool	operator<(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer < rhs._pointer);}
+		friend bool	operator>=(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer >= rhs._pointer);}
+		friend bool	operator<=(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer <= rhs._pointer);}
 
 		/* -------------------------------- Operation ------------------------------- */
 		random_access_iterator& operator+=(	difference_type n ) { _pointer += n;	return(*this); }
@@ -88,8 +88,8 @@ namespace ft
 		friend random_access_iterator	operator+( random_access_iterator &rhs, difference_type n)
 		{ random_access_iterator tmp =rhs; tmp += n; return tmp; }
 		
-		friend difference_type	operator-(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return (lhs._pointer - rhs._pointer); }
-		friend difference_type	operator+(const random_access_iterator<T> &lhs, const random_access_iterator<T> &rhs) { return (lhs._pointer + rhs._pointer); }
+		friend difference_type	operator-(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) { return (lhs._pointer - rhs._pointer); }
+		friend difference_type	operator+(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) { return (lhs._pointer + rhs._pointer); }
 
 		/* ---------------------------------- Acces --------------------------------- */
 		reference	operator[](	difference_type n ) { return(*(_pointer + n)); }
