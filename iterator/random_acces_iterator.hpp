@@ -1,11 +1,12 @@
 #pragma once
 
 #include "iterator_base.hpp"
+#include "bidirectional_iterator.hpp" 
 
 namespace ft
 {
 	template<class I>
-	class random_access_iterator : public iterator<std::random_access_iterator_tag, I>
+	class random_access_iterator : public ft::iterator<std::random_access_iterator_tag, I>
 	{
 		public : 
 			typedef typename ft::iterator<std::random_access_iterator_tag, I>::difference_type		difference_type;
@@ -35,20 +36,20 @@ namespace ft
 			operator random_access_iterator<const I> () const  { return (random_access_iterator<const I>(this->_pointer)); }
 		
 		/* -------------------------- Increment/ Decrement -------------------------- */
-		random_access_iterator& operator++( void ) { _pointer++; return(*this); }
-		random_access_iterator& operator--( void ) { _pointer--; return(*this);	}
-		random_access_iterator operator++( int )
-		{
+			random_access_iterator& operator++( void ) { _pointer++; return(*this); }
+			random_access_iterator& operator--( void ) { _pointer--; return(*this);	}
+			random_access_iterator operator++( int )
+			{
+					random_access_iterator<value_type> tmp(_pointer);
+					_pointer++;
+					return (tmp);
+			}
+			random_access_iterator operator--( int )
+			{
 				random_access_iterator<value_type> tmp(_pointer);
-				_pointer++;
+				_pointer--;
 				return (tmp);
-		}
-		random_access_iterator operator--( int )
-		{
-			random_access_iterator<value_type> tmp(_pointer);
-			_pointer--;
-			return (tmp);
-		}
+			}
 
 		/* --------------------------------- Compare -------------------------------- */
 		friend bool	operator==(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) 	{return (lhs._pointer == rhs._pointer);}
