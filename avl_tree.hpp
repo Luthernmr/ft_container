@@ -20,9 +20,14 @@ namespace ft
 			size_t	_height;
 			size_t	_size;
 
+		public:
+		/* ------------------------ Constructor / Destructor ------------------------ */
+
+			
+
+		/* ----------------------------- Simple Rotation ---------------------------- */
 			nodeType *r_rotate(nodeType *node)
 			{
-
 				nodeType *newRoot = node->getlChild();
 				node->setlChild(newRoot->getrChild());
 				newRoot->setrChild(node);
@@ -43,6 +48,8 @@ namespace ft
 				updateH(newRoot);
 				return (newRoot);
 			}
+
+		/* --------------------------- Update node Height --------------------------- */
 			
 			void	updateH(nodeType *node)
 			{
@@ -56,6 +63,31 @@ namespace ft
 						node->setHeight(node->getrChild()->getHeight() + 1);
 			}
 
+		/* -------------------------------- Balancer -------------------------------- */
+			
+			int diffH (nodeType *node)
+			{
+				return (node->getlChild()->getHeight() - node->getrChild()->getHeight())
+			}
+
+			nodeType *balance(nodeType *node)
+			{
+				if (!node)
+					return;
+				else if (diffH(node) > 1)
+				{
+					if (diffH(node->getlChild()) < 0)
+						node->setlChild(l_rotate(node->getlChild()));
+					return (r_rotate(node));
+				}
+				else if (diffH(node) < -1)
+				{
+					if (diffH(node->getrChild()) > 0)
+						node->setrChild(r_rotate());
+					return (l_rotate(node));
+				}
+				return (node);
+			}
 	};
 }
 
