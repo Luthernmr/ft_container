@@ -6,29 +6,26 @@
 
 namespace ft
 {
-	template <class Key, class T>
+	template <class Pair>
 	class Node
 	{
 		private:
-			ft::pair<const Key, T> 	_content;
+			Pair 					_content;
 			size_t 					_height;
 			Node 					*_parent;
 			Node 					*_lChild;
 			Node 					*_rChild;
-		
+
 		public:
-			Node(ft::pair<const Key, T> &content) : 
+			Node(Pair &content) : 
 					_content(content), _parent(NULL), _height(1), _lChild(NULL), _rChild(NULL) {}
-			Node(ft::pair<const Key, T> &content, Node *parent) : 
+			Node(Pair &content, Node *parent) : 
 					_content(content), _parent(parent), _height(1), _lChild(NULL), _rChild(NULL) {}
 
 		/* --------------------------------- Getter --------------------------------- */
-			
-			const Key					first() 									{return (_content.first);}
-			const T						second() 									{return (_content.second);}
-			ft::pair<const Key, T> 		getContent() 								{return _content;};
-			const pair<const Key, T>&	getContent() const 							{return (_content);}
-        	void						setContent(const pair<const Key, T>& pair)	{_content = pair;}
+			Pair 						getContent() 								{return _content;};
+			const Pair&					getContent() const 							{return (_content);}
+        	void						setContent(const Pair& pair)				{_content = pair;}
         	Node*						getParent() const 							{return (_parent);}
         	void						setParent(Node* parent)						{_parent = parent;}
         	Node*						getlChild() const							{return (_lChild);}

@@ -4,31 +4,49 @@
 #include "./pair.hpp"
 #include "./node.hpp"
 
-class Node;
 namespace ft
 {
-
-	template<class Key,class T, class Compare = std::less<Key>>
+	template<class Node, class Compare, class Alloc>
 	class Tree
 	{
-		public :
-			int												height;
-			int 											diff;
-			typedef typename ft::Node<class Key, class T>	nodeType;
+		class Pair;
 
-			nodeType _root;
-			size_t	_height;
-			size_t	_size;
+		public :
+			typedef Node										node_type;
+			typedef Node*										node_ptr;
+			typedef Compare										key_compare;
+			typedef Alloc										node_allocator;
+			typedef typename node_allocator::size_type			size_type;
+			typedef typename node_allocator::difference_type	difference_type;
+
+			key_compare											_comp;
+			node_ptr 											_root;
+			size_t												_size;
+			node_allocator										_alloc;
 
 		public:
 		/* ------------------------ Constructor / Destructor ------------------------ */
+			Tree(const key_compare &comp = key_compare(), const node_allocator &alloc = node_allocator()) : _comp(comp), _root(NULL), _size(0), _alloc(alloc){}
+			~Tree()
+			{
+				deleteall(_root);
+			}
+
+			Tree &operator=(const Tree &obj)
+			{
+				_comp = obj._comp;
+				_root = obj._root;
+				_size = obj._size;
+				_alloc = obj._alloc;
+
+				return (*this);
+			}
 
 			
-
 		/* ----------------------------- Simple Rotation ---------------------------- */
-			nodeType *r_rotate(nodeType *node)
+			node_ptr r_rotate(node_ptr node)
 			{
-				nodeType *newRoot = node->getlChild();
+				node_ptr newRoot = node->getlChild();
 				node->setlChild(newRoot->getrChild());
 				newRoot->setrChild(node);
 				
@@ -37,10 +55,10 @@ namespace ft
 				return (newRoot);
 			}
 
-			nodeType *l_rotate(nodeType *node)
+			node_ptr l_rotate(node_ptr node)
 			{
 
-				nodeType *newRoot = node->getrChild();
+				node_ptr newRoot = node->getrChild();
 				node->setrChild(newRoot->getlChild());
 				newRoot->setlChild(node);
 				
@@ -50,8 +68,7 @@ namespace ft
 			}
 
 		/* --------------------------- Update node Height --------------------------- */
-			
-			void	updateH(nodeType *node)
+			void	updateH(node_ptr node)
 			{
 				if (!node)
 					return;
@@ -64,16 +81,15 @@ namespace ft
 			}
 
 		/* -------------------------------- Balancer -------------------------------- */
-			
-			int diffH (nodeType *node)
+			int diffH (node_ptr node)
 			{
-				return (node->getlChild()->getHeight() - node->getrChild()->getHeight())
+				return (node->getlChild()->getHeight() - node->getrChild()->getHeight());
 			}
 
-			nodeType *balance(nodeType *node)
+			node_ptr balance(node_ptr node)
 			{
 				if (!node)
-					return;
+					return(NULL);
 				else if (diffH(node) > 1)
 				{
 					if (diffH(node->getlChild()) < 0)
@@ -88,7 +104,36 @@ namespace ft
 				}
 				return (node);
 			}
+		/* -------------------------------- Capacity -------------------------------- */
+			size_type size() const { return (_size); }
+
+			size_type max_size() const {  return _alloc.max_size(); }
+
+		/* -------------------------------- Modifier -------------------------------- */
+			void deleteall(node_ptr root)
+			{
+				_size = 0;
+ 		  		if( root != NULL )
+  		 		{
+		 			deleteall(root->getrChild());
+		 			deleteall(root->getlChild());
+					_alloc.destroy(root);
+					_alloc.deallocate(root, 1);
+   				}
+			}
+
+			void insert(const node_type *node)
+			{
+				if (!node)
+				{
+					_size++;
+					node = _alloc.construct(node)
+				} 
+
+				root = balance(*node);
+			}
+	
 	};
-}
+};
 
 

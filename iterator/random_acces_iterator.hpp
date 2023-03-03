@@ -6,9 +6,9 @@
 namespace ft
 {
 	template<class I>
-	class random_access_iterator : public ft::iterator<std::random_access_iterator_tag, I>
+	class random_access_iterator : public ft::iterator<random_access_iterator_tag, T>
 	{
-		public : 
+		public: 
 			typedef typename ft::iterator<std::random_access_iterator_tag, I>::difference_type		difference_type;
 			typedef typename ft::iterator<std::random_access_iterator_tag, I>::value_type			value_type;
 			typedef typename ft::iterator<std::random_access_iterator_tag, I>::pointer				pointer;

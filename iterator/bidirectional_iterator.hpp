@@ -16,6 +16,9 @@ namespace ft
 			typedef typename ft::iterator<std::bidirectional_iterator_tag, I>::iterator_category	iterator_category;
 
 		private:
+			//class Node;
+			//typedef Node*	node_ptr;
+			//node_ptr _pointer;
 			pointer _pointer;
 
 		public:
@@ -49,8 +52,8 @@ namespace ft
 			}
 		
 		/* ----------------------------- Dereferencement ---------------------------- */
-			reference	operator*( void ) 	{ return(*_pointer); }
-			pointer		operator->( void ) 	{ return(_pointer); }
+			reference	operator*( void ) 	{ return(_pointer->_content); }
+			pointer		operator->( void ) 	{ return(_pointer->_content); }//FIXME - second et first
 
 	};
 }; // namespace ft
