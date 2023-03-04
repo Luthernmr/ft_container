@@ -6,26 +6,33 @@
 
 namespace ft
 {
-	template <class Pair>
+	template <class T>
 	class Node
 	{
+		public:
+			typedef	T									pair_type;
+			typedef typename pair_type::first_type		first_type;
+			typedef typename pair_type::second_type		second_type;
+
 		private:
-			Pair 					_content;
-			size_t 					_height;
-			Node 					*_parent;
-			Node 					*_lChild;
-			Node 					*_rChild;
+			pair_type									_content;
+			size_t 										_height;
+			Node 										*_parent;
+			Node 										*_lChild;
+			Node 										*_rChild;
 
 		public:
-			Node(Pair &content) : 
+			Node(pair_type &content) : 
 					_content(content), _parent(NULL), _height(1), _lChild(NULL), _rChild(NULL) {}
-			Node(Pair &content, Node *parent) : 
+			Node(pair_type &content, Node *parent) : 
 					_content(content), _parent(parent), _height(1), _lChild(NULL), _rChild(NULL) {}
 
 		/* --------------------------------- Getter --------------------------------- */
-			Pair 						getContent() 								{return _content;};
-			const Pair&					getContent() const 							{return (_content);}
-        	void						setContent(const Pair& pair)				{_content = pair;}
+			pair_type 					getContent() 								{return _content;};
+			const pair_type&			getContent() const 							{return (_content);}
+			first_type 					getFirst() const							{return (_content.first);}
+			second_type					getSecond() const							{return (_content.second);}
+        	void						setContent(const pair_type& pair)			{_content = pair;}
         	Node*						getParent() const 							{return (_parent);}
         	void						setParent(Node* parent)						{_parent = parent;}
         	Node*						getlChild() const							{return (_lChild);}

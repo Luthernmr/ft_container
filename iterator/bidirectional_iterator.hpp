@@ -1,7 +1,7 @@
 #pragma once
 
 #include "iterator_base.hpp"
-#include "./node.hpp"
+//#include "./node.hpp"
 
 namespace ft
 {
@@ -19,15 +19,15 @@ namespace ft
 			//class Node;
 			//typedef Node*	node_ptr;
 			//node_ptr _pointer;
-			pointer _pointer;
+			pointer 	_pointer;
+			value_type 	_end;
 
 		public:
 		
 		/* ------------------------- Constructor/ Destructor ------------------------ */
+			//bidirectional_iterator() : _pointer(NULL) {}
 			bidirectional_iterator(pointer begin) : _pointer(begin) {}
-			bidirectional_iterator() {_pointer = 0;}
-			bidirectional_iterator(const bidirectional_iterator &obj){_pointer = obj._pointer;}
-			bidirectional_iterator(const iterator_traits<bidirectional_iterator<value_type> > &obj){_pointer = obj._pointer;}
+			bidirectional_iterator(const bidirectional_iterator<value_type> &obj) {_pointer = obj._pointer;}
 			bidirectional_iterator	&operator=(const bidirectional_iterator &obj)
 			{
 				if (this != &obj)
@@ -53,7 +53,12 @@ namespace ft
 		
 		/* ----------------------------- Dereferencement ---------------------------- */
 			reference	operator*( void ) 	{ return(_pointer->_content); }
-			pointer		operator->( void ) 	{ return(_pointer->_content); }//FIXME - second et first
+			pointer		operator->( void ) 	
+			{ 
+				if (!_pointer)
+					return (&_end);
+				return(&(_pointer->_content));
+			}//FIXME - second et first
 
 	};
 }; // namespace ft

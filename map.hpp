@@ -1,9 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <stdexcept>
+#include <map>
 #include "pair.hpp"
-#include "iterator/bidirectional_iterator.hpp"
 #include "node.hpp"
+#include "iterator/bidirectional_iterator.hpp"
 #include "avl_tree.hpp"
 
 namespace ft
@@ -16,7 +18,7 @@ namespace ft
 		public:
 			typedef Key 																				key_type;
         	typedef T																					mapped_type;
-        	typedef ft::pair<const Key, T> 																value_type;
+        	typedef ft::pair<const Key, mapped_type> 													value_type;
         	typedef Compare 																			key_compare;
         	typedef Alloc																				allocator_type; 
 
@@ -97,14 +99,14 @@ namespace ft
 
 		/* -------------------------------- Iterators ------------------------------- */
 
-			iterator				begin()			 	{return iterator(_tree->begin());}
-			const_iterator			begin() const		{return iterator(_tree.begin());}
-			iterator				end() 				{return iterator(_tree.end());}
-			const_iterator			end() const 		{return iterator(_tree.end());}
-			reverse_iterator		rbegin() 			{return reverse_iterator(_tree.rbegin());}
-			const_reverse_iterator	rbegin() const 		{return const_reverse_iterator(_tree.rbegin());}
-			reverse_iterator		rend() 				{return reverse_iterator(_tree.rend());}
-			const_reverse_iterator	rend() const 		{return const_reverse_iterator(_tree.rend());}
+			iterator				begin()			 	{return iterator(_tree->minValue(_tree->_root));}
+			const_iterator			begin() const		{return iterator(_tree->minValue(_tree->_root));}
+			iterator				end() 				{return iterator(_tree->maxValue(_tree->_root));}
+			const_iterator			end() const 		{return iterator(_tree->maxValue(_tree->_root));}
+			reverse_iterator		rbegin() 			{return reverse_iterator(_tree->maxValue(_tree->_root));}
+			const_reverse_iterator	rbegin() const 		{return const_reverse_iterator(_tree->maxValue(_tree->_root));}
+			reverse_iterator		rend() 				{return reverse_iterator(_tree->minValue(_tree->_root));}
+			const_reverse_iterator	rend() const 		{return const_reverse_iterator(_tree->minValue(_tree->_root));}
 
 		/* -------------------------------- Capacity -------------------------------- */
 
@@ -116,27 +118,60 @@ namespace ft
 
 			void					clear() 
 			{
-				_tree->deleteall(_tree._root);
+				_tree->deleteAll(_tree->_root);
+				_tree->_root = NULL;
 			}
-			//REVIEW - 
-			ft::pair<iterator, bool>	insert(const value_type& value)
+
+			ft::pair<iterator, bool>	insert(const value_type& value) // The pair::second element (bool) in the pair is set to true if a new element was inserted or false if an equivalent element already existed.
 			{
 				bool tmp = false;
-				iterator pos = _tree.search(value.first);
-				if (!pos)
+				iterator it = _tree.search(value.first);
+				if (!it)
 					tmp = true;
-				_tree.insert(value);
+				_tree->insert(value);
 				return(ft::make_pair<iterator, bool>(iterator(_tree.search(value.first)), tmp));
 			}
 
-			iterator					insert(iterator pos, const value_type& value) {}
+			iterator					insert(iterator pos, const value_type& value) 
+			{
+					(void)	pos;
+					insert(value);
+					return(_tree.search(value.first));
+			}
 
 			template<class InputIt>	
-			void 						insert(InputIt first, InputIt last) {}
+			void 						insert(InputIt first, InputIt last) 
+			{
+				while (first != last)
+					{
+						insert(*first);
+						first++;
+					}
+			}
 
-			iterator					erase(iterator pos) {}
-			iterator					erase(iterator first, iterator last) {}
-			size_type					erase(const Key& key) {}
+			iterator					erase(iterator pos) 
+			{
+				_tree.remove((*pos).first);
+			}
+
+			iterator					erase(iterator first, iterator last) 
+			{
+				while(first != last)
+					{
+						if (first->first)
+							erase((first++)->first);
+					}
+			}
+
+			size_type					erase(const Key& key) 
+			{
+				if(_tree.search(key))
+					{
+						_tree.remove(key);
+						return (1);
+					}
+					return(0);
+			}
 			void						swap(map& other) {}
 
 		/* --------------------------------- Lookup --------------------------------- */
