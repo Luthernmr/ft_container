@@ -93,7 +93,13 @@ namespace ft
 			}
 		/* ---------------------------------- Acces --------------------------------- */
 
-			mapped_type&			at(const Key& key) {}
+			mapped_type&			at(const Key& key) 
+			{
+				node_ptr node = _tree->getKey(key);
+				if (!node)
+					throw (std::out_of_range("out_of_range"));
+				return(node->getContent().second);
+			}
 			const mapped_type&		at(const Key& key) const {}
 			mapped_type&			operator[](const Key& key) {}
 
@@ -143,10 +149,10 @@ namespace ft
 			void 						insert(InputIt first, InputIt last) 
 			{
 				while (first != last)
-					{
-						insert(*first);
-						first++;
-					}
+				{
+					insert(*first);
+					first++;
+				}
 			}
 
 			iterator					erase(iterator pos) 
@@ -157,10 +163,10 @@ namespace ft
 			iterator					erase(iterator first, iterator last) 
 			{
 				while(first != last)
-					{
-						if (first->first)
-							erase((first++)->first);
-					}
+				{
+					if (first->first)
+						erase((first++)->first);
+				}
 			}
 
 			size_type					erase(const Key& key) 

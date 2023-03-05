@@ -63,7 +63,24 @@ namespace ft
 					tmp = tmp->getrChild();
 				return (tmp);
 			}
-			
+		/* ------------------------------ Get Node Key ------------------------------ */
+			node_ptr	getKey(const Key& key) const
+			{	
+				return(getKey(key,_root));
+			}
+
+			node_ptr	getKey(const Key& key, node_ptr node) const
+			{
+				if (!node)
+					return(NULL);
+				if (node->getFirst() == key)
+					return(node);
+				else if (_keycomp(key,node->getFirst()))
+					return(getKey(key, node->getlChild()));
+				else
+					return(getKey(key,node->getrChild()));
+				return NULL;
+			}
 		/* ----------------------------- Simple Rotation ---------------------------- */
 			node_ptr r_rotate(node_ptr node)
 			{
