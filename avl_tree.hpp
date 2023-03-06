@@ -18,6 +18,7 @@ namespace ft
 			typedef ft::Node<pair_type>*						node_ptr;
 			typedef Compare										key_compare;
 			typedef std::allocator<node_type>					node_allocator;
+
 			typedef typename node_allocator::size_type			size_type;
 			typedef typename node_allocator::difference_type	difference_type;
 
@@ -34,7 +35,7 @@ namespace ft
 				clearTree(_root);
 			}
 
-			Tree &operator=(const Tree &obj)
+			Tree &operator=(const Tree &obj)//SECTION - 
 			{
 				_keycomp = obj._keycomp;
 				_root = obj._root;
@@ -146,13 +147,13 @@ namespace ft
 			void	insert(const Key& key, const Value& val)
 			{	
 				_root = insert_Node(_root, key, val);
-				_root->setParent(NULL);	
+				//_root->setParent(NULL);	
 			}
 
 			void	insert(const pair_type &pair)
 			{
 				_root = insert_node(_root, pair.first, pair.second);
-				_root->setParent(NULL);
+				//_root->setParent(NULL);
 			}
 			
 			node_ptr insert_node(node_ptr node, const Key &key, const Value &value)
@@ -162,7 +163,7 @@ namespace ft
 					node = _alloc.allocate(1);
 					try
 					{
-						_alloc.construct(node, make_pair(key, value)); 
+						_alloc.construct(node, ft::make_pair(key, value)); 
 					}
 					catch(...)
 					{
@@ -175,15 +176,17 @@ namespace ft
 				else if (_keycomp(node->getFirst()) , key)
 				{
 					node->setrChild(insert_node(node->getrChild(), key, value));
-					if (node->getrChild())
-						node->getrChild()->setParent(node);
+					//if (node->getrChild())
+					//	node->getrChild()->setParent(node);
 				}
 				else if (_keycomp(key, node->getFirst()))
 				{
 					node->setlChild(insert_node(node->getlChild(), key, value));
-					if (node->getlChild())
-						node->getlChild()->setParent(node);
+					//if (node->getlChild())
+					//	node->getlChild()->setParent(node);
 				}
+				updateH(node);
+
 				return (balance(node));
 			}
 
@@ -207,6 +210,8 @@ namespace ft
 
 			node_ptr findKey(const Key &key, node_ptr node)
 			{
+				if (!node)
+					return (NULL);
 				if (_keycomp(key, node->getFirst()))
 					findKey(key, node->getlChild());
 				else if (_keycomp(node->getFirst(), key))

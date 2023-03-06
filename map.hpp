@@ -6,6 +6,7 @@
 #include "pair.hpp"
 #include "node.hpp"
 #include "iterator/bidirectional_iterator.hpp"
+#include "iterator/random_acces_iterator.hpp"
 #include "avl_tree.hpp"
 
 namespace ft
@@ -23,9 +24,9 @@ namespace ft
         	typedef Alloc																				allocator_type; 
 
 		private:
-			typedef	ft::Node<value_type>																node_type;
 			typedef	ft::Node<value_type>*																node_ptr;
-			typedef ft::Tree<node_type, key_compare , allocator_type>									tree_type;
+			typedef	ft::Node<value_type>																node_type;
+			typedef ft::Tree<key_type, value_type>														tree_type;
 
 		public:
         	typedef typename allocator_type::reference 													reference;
@@ -35,7 +36,7 @@ namespace ft
         	typedef typename allocator_type::size_type 													size_type;
         	typedef typename allocator_type::difference_type 											difference_type;
 
-        	typedef typename ft::bidirectional_iterator<node_type> 										iterator;
+        	typedef typename ft::bidirectional_iterator<node_type> 									iterator;
         	typedef typename ft::bidirectional_iterator<const node_type> 								const_iterator;
 
         	typedef typename ft::reverse_iterator<iterator> 											reverse_iterator;
@@ -95,7 +96,7 @@ namespace ft
 
 			mapped_type&			at(const Key& key) 
 			{
-				_tree.
+				//_tree.
 			}
 			const mapped_type&		at(const Key& key) const {}
 			mapped_type&			operator[](const Key& key) {}
@@ -131,7 +132,7 @@ namespace ft
 				if (!it)
 					tmp = true;
 				_tree->insert(value);
-				ft::pair<iterator, bool> pair = ft::make_pair<iterator, bool>(iterator(_tree->findKey(value.first)), tmp)
+				ft::pair<iterator, bool> pair = ft::make_pair<iterator, bool>(iterator(_tree->findKey(value.first)), tmp);
 				return(pair);
 			}
 
@@ -170,7 +171,7 @@ namespace ft
 			{
 				if(_tree->findKey(key))
 					{
-						_tree.remove(key);
+						//_tree.remove(key);
 						return (1);
 					}
 					return(0);

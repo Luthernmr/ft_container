@@ -2,10 +2,12 @@
 
 #include "iterator_base.hpp"
 
+using namespace ft;
 namespace ft
 {
+
 	template<class I>
-	class random_access_iterator : public ft::iterator<std::random_access_iterator_tag, I>
+	class random_access_iterator : public iterator<std::random_access_iterator_tag, I>
 	{
 		public: 
 			typedef typename ft::iterator<std::random_access_iterator_tag, I>::difference_type		difference_type;
@@ -98,5 +100,11 @@ namespace ft
 
 	};
 
-	template <>
+		template<typename Iterator1, typename Iterator2>
+		typename random_access_iterator<Iterator1>::difference_type
+		operator-(const random_access_iterator<Iterator1> lhs,
+				const random_access_iterator<Iterator2> rhs)
+		{
+			return (lhs.base() - rhs.base());
+		}
 };
