@@ -31,7 +31,7 @@ namespace ft
 			Tree(const key_compare &comp = key_compare(), const node_allocator &alloc = std::allocator<node_type>()) : _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){}
 			~Tree()
 			{
-				deleteAll(_root);
+				clearTree(_root);
 			}
 
 			Tree &operator=(const Tree &obj)
@@ -131,13 +131,13 @@ namespace ft
 			size_type max_size() const {  return _alloc.max_size(); }
 
 		/* -------------------------------- Modifier -------------------------------- */
-			void deleteAll(node_ptr root)
+			void clearTree(node_ptr root)
 			{
 				_size = 0;
  		  		if(root != NULL)
   		 		{
-		 			deleteAll(root->getrChild());
-		 			deleteAll(root->getlChild());
+		 			clearTree(root->getrChild());
+		 			clearTree(root->getlChild());
 					_alloc.destroy(root);
 					_alloc.deallocate(root, 1);
    				}
@@ -195,6 +195,23 @@ namespace ft
 				//{
 				//	node->setrChild()
 				//}
+			}
+
+			node_ptr findKey(const Key &key)
+			{
+				if (!key)
+					return (NULL);
+				return(findKey(key, _root));
+				
+			}
+
+			node_ptr findKey(const Key &key, node_ptr node)
+			{
+				if (_keycomp(key, node->getFirst()))
+					findKey(key, node->getlChild());
+				else if (_keycomp(node->getFirst(), key))
+					findKey(key, node->getrChild());
+				return (node);
 			}
 	};
 };

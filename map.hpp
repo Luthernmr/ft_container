@@ -93,7 +93,10 @@ namespace ft
 			}
 		/* ---------------------------------- Acces --------------------------------- */
 
-			mapped_type&			at(const Key& key) {}
+			mapped_type&			at(const Key& key) 
+			{
+				_tree.
+			}
 			const mapped_type&		at(const Key& key) const {}
 			mapped_type&			operator[](const Key& key) {}
 
@@ -118,25 +121,25 @@ namespace ft
 
 			void					clear() 
 			{
-				_tree->deleteAll(_tree->_root);
-				_tree->_root = NULL;
+				_tree->clearTree(_tree->_root);
 			}
 
 			ft::pair<iterator, bool>	insert(const value_type& value) // The pair::second element (bool) in the pair is set to true if a new element was inserted or false if an equivalent element already existed.
 			{
 				bool tmp = false;
-				iterator it = _tree.search(value.first);
+				iterator it = _tree->findKey(value.first);
 				if (!it)
 					tmp = true;
 				_tree->insert(value);
-				return(ft::make_pair<iterator, bool>(iterator(_tree.search(value.first)), tmp));
+				ft::pair<iterator, bool> pair = ft::make_pair<iterator, bool>(iterator(_tree->findKey(value.first)), tmp)
+				return(pair);
 			}
 
 			iterator					insert(iterator pos, const value_type& value) 
 			{
 					(void)	pos;
 					insert(value);
-					return(_tree.search(value.first));
+					return(_tree->findKey(value.first));
 			}
 
 			template<class InputIt>	
@@ -165,7 +168,7 @@ namespace ft
 
 			size_type					erase(const Key& key) 
 			{
-				if(_tree.search(key))
+				if(_tree->findKey(key))
 					{
 						_tree.remove(key);
 						return (1);
