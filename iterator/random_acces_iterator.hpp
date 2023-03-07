@@ -99,12 +99,4 @@ namespace ft
 		pointer		operator->( void ) { return(_pointer); }
 
 	};
-
-		template<typename Iterator1, typename Iterator2>
-		typename random_access_iterator<Iterator1>::difference_type
-		operator-(const random_access_iterator<Iterator1> lhs,
-				const random_access_iterator<Iterator2> rhs)
-		{
-			return (lhs.base() - rhs.base());
-		}
 };
