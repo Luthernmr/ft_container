@@ -17,8 +17,8 @@ using namespace ft;
 
 		private:
 			//class Node;
-			typedef	ft::Node<value_type>*	node_ptr;
 			typedef	ft::Node<value_type>	node_type;
+			typedef	ft::Node<value_type>*	node_ptr;
 			node_ptr						_pointer;
 			//value_type 	node;
 
