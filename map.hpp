@@ -7,6 +7,7 @@
 #include "node.hpp"
 #include "iterator/reverse_iterator.hpp"
 #include "iterator/bidirectional_iterator.hpp"
+#include "iterator/lexicographical_compare.hpp"
 
 using namespace ft;
 namespace ft
@@ -47,9 +48,10 @@ namespace ft
 		public:
 			class value_compare : public std::binary_function<value_type, value_type, bool>
 			{
+				friend class map;
 				protected:
-					key_compare	comp;
-					value_compare(key_compare c) : comp(c){};
+					Compare	comp;
+					value_compare(Compare c) : comp(c){};
 				public:
 					//~value_compare();
 
@@ -71,15 +73,9 @@ namespace ft
 			template< class InputIt >
 			map(InputIt first, InputIt last,const Compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){insert(first,last);}
 
-			map(const map& obj)
-			{
-				*this = obj;
-			}
+			map(const map& obj) {*this = obj;}
 
-			~map() 
-			{
-				clearTree(_root);
-			}
+			~map() {clearTree(_root);}
 
 			map& operator=(const map& obj)
 			{
@@ -103,8 +99,25 @@ namespace ft
 					throw (std::out_of_range("out_of_range"));
 				return(node->getSecond());
 			}
-			const mapped_type&		at(const Key& key) const {}
-			mapped_type&			operator[](const Key& key) {}
+			const mapped_type&		at(const Key& key) const 
+			{
+				node_ptr node = findKey(key);
+				if (!node)
+					throw (std::out_of_range("out_of_range"));
+				return(node->_content.second);
+			}
+			T&			operator[](const Key& key)
+			{
+				node_ptr node = findKey(key);
+				if (!node)
+				{
+					insert(value_type(key, mapped_type()));
+					node = findKey(key);
+				}
+				return (node->_content.second);
+			}
+
+		
 
 		/* -------------------------------- Iterators ------------------------------- */
 
@@ -137,7 +150,7 @@ namespace ft
 				if (it == NULL)
 					tmp = true;
 				insert_help(value);
-				ft::pair<iterator, bool> pair = ft::make_pair<iterator, bool>(iterator(findKey(value.first)), tmp);
+				ft::pair<iterator, bool> pair = ft::make_pair(iterator(findKey(value.first)), tmp);
 				return(pair);
 			}
 
@@ -160,7 +173,9 @@ namespace ft
 
 			iterator					erase(iterator pos) 
 			{
-				//_tree.remove((*pos).first);
+				iterator tmp = pos;
+				deleteNode(_root,(*pos).first);
+				return (pos);
 			}
 
 			iterator					erase(iterator first, iterator last) 
@@ -168,19 +183,75 @@ namespace ft
 				while(first != last)
 				{
 					if (first->first)
+					{
+						iterator tmp = first;
 						erase((first++)->first);
+						return (tmp);
+					}
 				}
+				return (NULL);
 			}
 
-			size_type					erase(const Key& key) 
+			size_type					erase(const Key &key) 
 			{
 				if(findKey(key))
 					{
-						//_tree.remove(key);
+						deleteNode(_root, key);
 						return (1);
 					}
 					return(0);
 			}
+
+			node_ptr deleteNode(node_ptr root, const Key &key)
+			{
+				if (!root)
+					return (root);
+				if (_keycomp(key, root->getFirst()))
+					root->setlChild(deleteNode(root->getlChild(), key));
+				else if (_keycomp(root->getFirst(), key))
+					root->setrChild(deleteNode(root->getrChild(), key));
+
+				else
+   				{
+   				    // node with only one child or no child
+   				    if ( (root->getlChild() == NULL) || (root->getrChild() == NULL) )
+   				    {
+   				        node_ptr temp = root->getlChild() ? root->getlChild() : root->getrChild();
+			
+   				        // No child case
+   				        if (temp == NULL)
+   				        {
+   				            temp = root;
+   				            root = NULL;
+   				        }
+   				        else // One child case
+   				       	root = temp; // Copy the contents of
+   				                       // the non-empty child
+   						_alloc.destroy(root);
+						_alloc.deallocate(root);
+						_size--;
+   				    }
+   				    else
+   				    {
+   				        // node with two children: Get the inorder
+   				        // successor (smallest in the right subtree)
+   				       node_ptr temp = minValue(root->getrChild());
+			
+   				        // Copy the inorder successor's
+   				        // data to this node
+   				        root->_content.first = temp->_content.first;
+			
+   				        // Delete the inorder successor
+   				        root->setrChild(deleteNode(root->getrChild(), temp->getFirst()));
+   				    }
+   				}
+   				if (root == NULL)
+   					return root;
+			
+				updateH(root);
+   				return (balance(root));
+			}
+
 			void						swap(map& other) {}
 
 		/* --------------------------------- Lookup --------------------------------- */
@@ -196,14 +267,14 @@ namespace ft
 			const_iterator								upper_bound(const Key& key) const {}
 
 		/* -------------------------------- Observer -------------------------------- */
-			key_compare									key_comp() const {}
-			value_compare								value_comp() const {}
+			key_compare									key_comp() const {return (key_compare());}
+			value_compare 								value_comp() const {return value_compare(key_compare());}
 
 			/* -------------------------------------------------------------------------- */
 			/*                                    tree                                    */
 			/* -------------------------------------------------------------------------- */
 
-		node_ptr	minValue(node_ptr node) const
+			node_ptr	minValue(node_ptr node) const
 			{
 				node_ptr tmp = node;
 				if (!tmp)
@@ -300,7 +371,7 @@ namespace ft
 
 			void	insert_help(const Key& key, const mapped_type& val)
 			{	
-				_root = insert_node(_root, &(ft::make_pair(key, val)));
+				_root = insert_node(_root, (ft::make_pair(key, val)));
 				//_root->setParent(NULL);	
 			}
 

@@ -26,12 +26,10 @@ namespace ft
 					_content(content), _height(1), _parent(parent), _lChild(NULL), _rChild(NULL) {}
 
 		/* --------------------------------- Getter --------------------------------- */
-			pair_type 					getContent() 								{return _content;};
+			pair_type					getContent() 								{return _content;};
 			const pair_type&			getContent() const 							{return (_content);}
-			first_type 					getFirst() 									{return (_content.first);}
 			first_type 					getFirst() const							{return (_content.first);}
-			second_type					getSecond()									{return (_content.second);}
-			second_type					getSecond() const							{return (_content.second);}
+			const second_type&			getSecond() const							{return ((_content.second));}
         	void						setContent(const pair_type& pair)			{_content = pair;}
         	Node*						getParent() const 							{return (_parent);}
         	void						setParent(Node* parent)						{_parent = parent;}

@@ -14,12 +14,12 @@ namespace ft
 		/* ------------------------ Constructor / Destructor ------------------------ */
 		pair(): first(), second() {}
 
-		pair(const T1& x, const T2& y): first(x), second(y) {}
+		pair(const first_type& x, const second_type& y): first(x), second(y) {}
 
 		template< class U1, class U2 >
 		pair(const pair<U1, U2>& p): first(p.first), second(p.second) {}
 
-		pair& operator=(const pair& obj)
+		pair& operator=(const pair<first_type, second_type>& obj)
 		{
 			first = obj.first;
 			second = obj.second;
@@ -30,10 +30,10 @@ namespace ft
 	};
 	
 	/* -------------------------- Non-member functions -------------------------- */
-	template<class T1, class T2 >
-	ft::pair<T1, T2> make_pair(T1 t, T2 u)
+	template<class first_type, class second_type >
+	ft::pair<first_type, second_type> make_pair(first_type t, second_type u)
   	{
-    	return (pair<T1,T2>(t, u));
+    	return (ft::pair<first_type ,second_type>(t, u));
   	}
 	
 	/* -------------------------------- Operators ------------------------------- */

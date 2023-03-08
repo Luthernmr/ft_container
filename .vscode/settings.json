@@ -31,6 +31,7 @@
 		"stdexcept": "cpp",
 		"streambuf": "cpp",
 		"tuple": "cpp",
-		"typeinfo": "cpp"
+		"typeinfo": "cpp",
+		"list": "cpp"
 	}
 }
