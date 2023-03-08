@@ -27,13 +27,14 @@ namespace ft
 			typedef typename allocator_type::const_pointer 					const_pointer;
 			typedef typename allocator_type::difference_type				difference_type;
 			typedef typename allocator_type::size_type						size_type;
+			
 			typedef typename ft::random_access_iterator<value_type> 		iterator;
 			typedef typename ft::random_access_iterator<const value_type> 	const_iterator;
 			typedef typename ft::reverse_iterator<iterator> 				reverse_iterator;
 			typedef typename ft::reverse_iterator<const_iterator> 			const_reverse_iterator;
 
 		private:
-			value_type 		*_array;
+			pointer			_array;
 			allocator_type 	_myAlloc;
 			size_type 		_size;
 			size_type 		_capacity;
