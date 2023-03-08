@@ -7,14 +7,12 @@
 namespace ft
 {
 	template <class T>
-	class Node
+	struct Node
 	{
-		public:
 			typedef T									pair_type;
 			typedef typename pair_type::first_type		first_type;
 			typedef typename pair_type::second_type		second_type;
 
-		private:
 			pair_type									_content;
 			size_t 										_height;
 			Node 										*_parent;

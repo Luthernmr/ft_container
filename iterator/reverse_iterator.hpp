@@ -1,18 +1,18 @@
 #pragma once
 
 #include <memory>
-#include "iterator_base.hpp"
+
 #include "iterator_traits.hpp"
 #include <iostream>
 
-using namespace ft;
+
 namespace ft
 {
 	template< class Iter >
 	class reverse_iterator
 	{
 		public:
-			typedef	Iter													iterator_type;
+			typedef	Iter												iterator_type;
 			typedef typename iterator_traits<Iter>::iterator_category	iterator_category;
 			typedef typename iterator_traits<Iter>::value_type			value_type;
 			typedef typename iterator_traits<Iter>::difference_type		difference_type;

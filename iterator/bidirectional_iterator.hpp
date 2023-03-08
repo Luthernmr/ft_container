@@ -4,16 +4,15 @@
 #include "./node.hpp"
 namespace ft
 {
-using namespace ft;
 	template<class I>
-	class bidirectional_iterator : public ft::iterator<std::bidirectional_iterator_tag, I>
+	class bidirectional_iterator : public ft::iterator_traits<iterator<std::bidirectional_iterator_tag, I> >
 	{
 		public:
-			typedef typename ft::iterator<std::bidirectional_iterator_tag, I>::difference_type		difference_type;
-			typedef typename ft::iterator<std::bidirectional_iterator_tag, I>::value_type			value_type;
-			typedef typename ft::iterator<std::bidirectional_iterator_tag, I>::pointer				pointer;
-			typedef typename ft::iterator<std::bidirectional_iterator_tag, I>::reference			reference;
-			typedef typename ft::iterator<std::bidirectional_iterator_tag, I>::iterator_category	iterator_category;
+			typedef typename bidirectional_iterator::difference_type		difference_type;
+			typedef typename bidirectional_iterator::value_type				value_type;
+			typedef typename bidirectional_iterator::pointer				pointer;
+			typedef typename bidirectional_iterator::reference				reference;
+			typedef typename bidirectional_iterator::iterator_category		iterator_category;
 
 		private:
 			//class Node;
@@ -29,15 +28,16 @@ using namespace ft;
 			//bidirectional_iterator() : _pointer(NULL) {}
 			bidirectional_iterator(node_ptr begin) : _pointer(begin) {}
 			bidirectional_iterator() {_pointer = 0;}
-			bidirectional_iterator(const bidirectional_iterator &obj){_pointer = obj._pointer;}
-			bidirectional_iterator(const ft::iterator_traits<bidirectional_iterator<value_type> > &obj){_pointer = obj._pointer;}
+			//bidirectional_iterator(const bidirectional_iterator &obj){_pointer = obj._pointer;}
+			bidirectional_iterator(const bidirectional_iterator<I> &obj) :_pointer(obj._pointer) {}
 			bidirectional_iterator	&operator=(const bidirectional_iterator &obj)
 			{
 				if (this != &obj)
 					this->_pointer = obj._pointer;
 				return *this;
 			}
-			//~bidirectional_iterator(){};
+			~bidirectional_iterator(){};
+			operator bidirectional_iterator<const I> () const  { return (bidirectional_iterator(this->_pointer)); }
 		/* -------------------------- Increment / Decrement ------------------------- */
 			bidirectional_iterator& operator++( void ) { _pointer++; return(*this); }
 			bidirectional_iterator& operator--( void ) { _pointer--; return(*this);	}
@@ -55,8 +55,8 @@ using namespace ft;
 			}
 		
 		/* ----------------------------- Dereferencement ---------------------------- */
-			reference	operator*( void ) 	{ return(_pointer->_content); }
-			pointer		operator->( void ) 	
+			reference	operator*( void ) const 	{ return(_pointer->_content); }
+			pointer	operator->() const	
 			{ 
 				//if (!_pointer)
 				//	return (&_end);

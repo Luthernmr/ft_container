@@ -5,6 +5,7 @@
 #include <map>
 #include "pair.hpp"
 #include "node.hpp"
+#include "iterator/reverse_iterator.hpp"
 #include "iterator/bidirectional_iterator.hpp"
 
 using namespace ft;
@@ -64,11 +65,11 @@ namespace ft
 
 		/* ------------------------- Constructor / Destrucor ------------------------ */
 
-			map();
-			map(const Compare& comp = std::less<Key>(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){}
+			//map();
+			map(const Compare& comp = key_compare(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){}
 
 			template< class InputIt >
-			map(InputIt first, InputIt last,const Compare& comp = std::less<Key>(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){}
+			map(InputIt first, InputIt last,const Compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){insert(first,last);}
 
 			map(const map& obj)
 			{
@@ -326,7 +327,7 @@ namespace ft
 					_size++;
 					return (node);
 				}
-				else if (_keycomp((Key)node->getFirst()) , (Key)pair.first)
+				else if (_keycomp(node->getFirst(), pair.first))
 				{
 					node->setrChild(insert_node(node->getrChild(), pair));
 					//if (node->getrChild())
@@ -366,9 +367,9 @@ namespace ft
 				if (!node)
 					return (NULL);
 				if (_keycomp(key, node->getFirst()))
-					findKey(key, node->getlChild());
+					return(findKey(key, node->getlChild()));
 				else if (_keycomp(node->getFirst(), key))
-					findKey(key, node->getrChild());
+					return (findKey(key, node->getrChild()));
 				return (node);
 			}
 
