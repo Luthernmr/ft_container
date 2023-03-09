@@ -18,10 +18,10 @@ namespace ft
 		public:
 			typedef Key 																				key_type;
         	typedef T																					mapped_type;
-        	typedef ft::pair<const Key, mapped_type> 													value_type;
+        	typedef ft::pair<const key_type, mapped_type> 												value_type;
         	typedef Compare 																			key_compare;
         	typedef Alloc																				allocator_type; 
-		//private:
+		private:
 			typedef	ft::Node<value_type>																node_type;
 			typedef	ft::Node<value_type>*																node_ptr;
 			key_compare																					_keycomp;
@@ -38,8 +38,8 @@ namespace ft
         	typedef typename allocator_type::size_type 													size_type;
         	typedef typename allocator_type::difference_type 											difference_type;
 
-        	typedef typename ft::bidirectional_iterator<value_type> 									iterator;
-        	typedef typename ft::bidirectional_iterator<const value_type> 								const_iterator;
+        	typedef typename ft::bidirectional_iterator<value_type, node_type> 							iterator;
+        	typedef typename ft::bidirectional_iterator<const value_type,const node_type> 				const_iterator;
 
         	typedef typename ft::reverse_iterator<iterator> 											reverse_iterator;
         	typedef typename ft::reverse_iterator<const_iterator> 										const_reverse_iterator;
@@ -150,7 +150,6 @@ namespace ft
 				clearTree(_root);
 			}
 
-		
 			ft::pair<iterator, bool>	insert(const value_type& value) // The pair::second element (bool) in the pair is set to true if a new element was inserted or false if an equivalent element already existed.
 			{
 				bool tmp = false;
@@ -235,7 +234,8 @@ namespace ft
 
 			size_type									count(const Key& key) const
 			{
-				if (findKey(key))
+				node_ptr tmp = findKey(key);
+				if (tmp)
 						return((size_type) 1);
 				return((size_type) 0);
 			}
@@ -370,11 +370,22 @@ namespace ft
 		/* -------------------------------- Balancer -------------------------------- */
 			int diffH (node_ptr node)
 			{
-				return (node->getlChild()->getHeight() - node->getrChild()->getHeight());
+				int lh;
+				int rh;
+				if (!node->_lChild)
+					lh = 0;
+				else
+					lh = node->_lChild->_height;
+				if (!node->_rChild)
+					rh = 0;
+				else
+					rh = node->_rChild->_height;
+				return (lh - rh);
 			}
 
 			node_ptr balance(node_ptr node)
 			{
+
 				if (!node)
 					return(NULL);
 				else if (diffH(node) > 1)
@@ -407,13 +418,13 @@ namespace ft
 			void	insert_help(const Key& key, const mapped_type& val)
 			{	
 				_root = insert_node(_root, (ft::make_pair(key, val)));
-				//_root->setParent(NULL);	
+				_root->setParent(NULL);	
 			}
 
 			void	insert_help(const value_type pair)
 			{
 				_root = insert_node(_root, pair);
-				//_root->setParent(NULL);
+				_root->setParent(NULL);
 			}
 
 			node_ptr insert_node(node_ptr node, value_type pair)
@@ -436,27 +447,27 @@ namespace ft
 				else if (_keycomp(node->getFirst(), pair.first))
 				{
 					node->setrChild(insert_node(node->getrChild(), pair));
-					//if (node->getrChild())
-					//	node->getrChild()->setParent(node);
+					if (node->getrChild())
+						node->getrChild()->setParent(node);
 				}
 				else if (_keycomp(pair.first, node->getFirst()))
 				{
 					node->setlChild(insert_node(node->getlChild(), pair));
-					//if (node->getlChild())
-					//	node->getlChild()->setParent(node);
+					if (node->getlChild())
+						node->getlChild()->setParent(node);
 				}
 				updateH(node);
 
 				return (balance(node));
 			}
 
-			node_ptr findKey(const Key &key)
+			node_ptr findKey(const Key &key) const
 			{
 				return(findKey(key, _root));
 				
 			}
 
-			node_ptr findKey(const Key &key, node_ptr node)
+			node_ptr findKey(const Key &key, node_ptr node) const
 			{
 				if (!node)
 					return (NULL);

@@ -4,8 +4,8 @@
 #include "./node.hpp"
 namespace ft
 {
-	template<class I>
-	class bidirectional_iterator : public ft::iterator_traits<iterator<std::bidirectional_iterator_tag, I> >
+	template<class I, class Node>
+	class bidirectional_iterator : public iterator<std::bidirectional_iterator_tag, I>
 	{
 		public:
 			typedef typename bidirectional_iterator::difference_type		difference_type;
@@ -16,20 +16,20 @@ namespace ft
 
 		private:
 			//class Node;
-			typedef	ft::Node<value_type>	node_type;
-			typedef	ft::Node<value_type>*	node_ptr;
-			node_ptr						_pointer;
+			typedef	Node														node_type;
+			typedef	iterator<std::bidirectional_iterator_tag, node_type>	node_it;
+			typedef typename iterator_traits<node_it>::pointer 				node_pointer;
+			node_pointer													_pointer;
 			//value_type 	node;
 
 
 		public:
 		
 		/* ------------------------- Constructor/ Destructor ------------------------ */
-			//bidirectional_iterator() : _pointer(NULL) {}
-			bidirectional_iterator(node_ptr begin) : _pointer(begin) {}
+			bidirectional_iterator(node_pointer begin) : _pointer(begin) {}
 			bidirectional_iterator() {_pointer = 0;}
 			//bidirectional_iterator(const bidirectional_iterator &obj){_pointer = obj._pointer;}
-			bidirectional_iterator(const bidirectional_iterator<I> &obj) :_pointer(obj._pointer) {}
+			bidirectional_iterator(const iterator_traits<bidirectional_iterator<I, Node> >&obj) :_pointer(obj._pointer) {}
 			bidirectional_iterator	&operator=(const bidirectional_iterator &obj)
 			{
 				if (this != &obj)
@@ -37,39 +37,35 @@ namespace ft
 				return *this;
 			}
 			~bidirectional_iterator(){};
-			operator bidirectional_iterator<const I> () const  { return (bidirectional_iterator(this->_pointer)); }
+			operator bidirectional_iterator<const I, const Node>() const  { return (bidirectional_iterator<const I, const Node>(_pointer)); }
 		/* -------------------------- Increment / Decrement ------------------------- */
 			bidirectional_iterator& operator++( void ) { _pointer++; return(*this); }
 			bidirectional_iterator& operator--( void ) { _pointer--; return(*this);	}
 			bidirectional_iterator operator++( int )
 			{
-					bidirectional_iterator<value_type> tmp(_pointer);
+					bidirectional_iterator<I, Node> tmp(_pointer);
 					_pointer++;
 					return (tmp);
 			}
 			bidirectional_iterator operator--( int )
 			{
-				bidirectional_iterator<value_type> tmp(_pointer);
+				bidirectional_iterator<I, Node> tmp(_pointer);
 				_pointer--;
 				return (tmp);
 			}
 		
 		/* ----------------------------- Dereferencement ---------------------------- */
 			reference	operator*( void ) const 	{ return(_pointer->_content); }
-			pointer	operator->() const	
-			{ 
-				//if (!_pointer)
-				//	return (&_end);
-				return(&(_pointer->_content));
-			}//FIXME - second et first
+
+			pointer	operator->() const				{ return(&(_pointer->_content)); }//FIXME - second et first
 
 		/* --------------------------------- compare -------------------------------- */
 
-		friend bool	operator==(const bidirectional_iterator<value_type> &lhs, const bidirectional_iterator<value_type> &rhs) 	{return (lhs._pointer == rhs._pointer);}
-		friend bool	operator!=(const bidirectional_iterator<value_type> &lhs, const bidirectional_iterator<value_type> &rhs) 	{return (lhs._pointer != rhs._pointer);}
-		friend bool	operator>(const bidirectional_iterator<value_type> &lhs, const bidirectional_iterator<value_type> &rhs) 	{return (lhs._pointer > rhs._pointer);}
-		friend bool	operator<(const bidirectional_iterator<value_type> &lhs, const bidirectional_iterator<value_type> &rhs) 	{return (lhs._pointer < rhs._pointer);}
-		friend bool	operator>=(const bidirectional_iterator<value_type> &lhs, const bidirectional_iterator<value_type> &rhs) 	{return (lhs._pointer >= rhs._pointer);}
-		friend bool	operator<=(const bidirectional_iterator<value_type> &lhs, const bidirectional_iterator<value_type> &rhs) 	{return (lhs._pointer <= rhs._pointer);}
+		friend bool	operator==(const bidirectional_iterator<I, Node> &lhs, const bidirectional_iterator<I, Node> &rhs) 	{return (lhs._pointer == rhs._pointer);}
+		friend bool	operator!=(const bidirectional_iterator<I, Node> &lhs, const bidirectional_iterator<I, Node> &rhs) 	{return (lhs._pointer != rhs._pointer);}
+		friend bool	operator>(const bidirectional_iterator<I, Node> &lhs, const bidirectional_iterator<I, Node> &rhs) 	{return (lhs._pointer > rhs._pointer);}
+		friend bool	operator<(const bidirectional_iterator<I, Node> &lhs, const bidirectional_iterator<I, Node> &rhs) 	{return (lhs._pointer < rhs._pointer);}
+		friend bool	operator>=(const bidirectional_iterator<I, Node> &lhs, const bidirectional_iterator<I, Node> &rhs) 	{return (lhs._pointer >= rhs._pointer);}
+		friend bool	operator<=(const bidirectional_iterator<I, Node> &lhs, const bidirectional_iterator<I, Node> &rhs) 	{return (lhs._pointer <= rhs._pointer);}
 	};
 }; // namespace ft

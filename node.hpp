@@ -25,6 +25,7 @@ namespace ft
 			Node(pair_type &content, Node *parent) : 
 					_content(content), _height(1), _parent(parent), _lChild(NULL), _rChild(NULL) {}
 
+
 		/* --------------------------------- Getter --------------------------------- */
 			pair_type					getContent() 								{return _content;};
 			const pair_type&			getContent() const 							{return (_content);}
