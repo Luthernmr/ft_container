@@ -61,6 +61,7 @@ namespace ft
 					}
 					
 			};
+			value_compare																				_valuecomp;
 
 		
 		public:
@@ -68,12 +69,17 @@ namespace ft
 		/* ------------------------- Constructor / Destrucor ------------------------ */
 
 			//map();
-			map(const Compare& comp = key_compare(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){}
+			map(const Compare& comp = key_compare(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc), _valuecomp(comp){}
 
 			template< class InputIt >
-			map(InputIt first, InputIt last,const Compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc){insert(first,last);}
+			map(InputIt first, InputIt last,const Compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc), _valuecomp(comp) {insert(first,last);}
 
-			map(const map& obj) {*this = obj;}
+			map(const map& obj) : _keycomp(obj._keycomp), _root(obj._root), _size(obj._size), _alloc(obj._alloc), _valuecomp(obj._valuecomp) 
+			{
+				const_iterator it = obj.begin();
+				while (it != obj.end())
+					insert(*it++);
+			}
 
 			~map() {clearTree(_root);}
 
@@ -83,6 +89,7 @@ namespace ft
 				_root = obj._root;
 				_size = obj._size;
 				_alloc = obj._alloc;
+				_valuecomp = obj._valuecomp;
 				return *this;
 			}
 		
@@ -143,6 +150,7 @@ namespace ft
 				clearTree(_root);
 			}
 
+		
 			ft::pair<iterator, bool>	insert(const value_type& value) // The pair::second element (bool) in the pair is set to true if a new element was inserted or false if an equivalent element already existed.
 			{
 				bool tmp = false;
@@ -202,75 +210,103 @@ namespace ft
 					return(0);
 			}
 
-			node_ptr deleteNode(node_ptr root, const Key &key)
+
+			void						swap(map& other)
 			{
-				if (!root)
-					return (root);
-				if (_keycomp(key, root->getFirst()))
-					root->setlChild(deleteNode(root->getlChild(), key));
-				else if (_keycomp(root->getFirst(), key))
-					root->setrChild(deleteNode(root->getrChild(), key));
+					node_ptr 		root = other._root;
+					size_type 		size = other._size;
+					key_compare		keycomp = other._keycomp;
+					allocator_type	alloc = other._alloc;
+					value_compare	valuecomp = other._valuecomp;
+					other._size = size;
+					other._root = root;
+					other._keycomp = keycomp;
+					other._alloc = alloc;
+					other._valuecomp = valuecomp;
 
-				else
-   				{
-   				    // node with only one child or no child
-   				    if ( (root->getlChild() == NULL) || (root->getrChild() == NULL) )
-   				    {
-   				        node_ptr temp = root->getlChild() ? root->getlChild() : root->getrChild();
-			
-   				        // No child case
-   				        if (temp == NULL)
-   				        {
-   				            temp = root;
-   				            root = NULL;
-   				        }
-   				        else // One child case
-   				       	root = temp; // Copy the contents of
-   				                       // the non-empty child
-   						_alloc.destroy(root);
-						_alloc.deallocate(root);
-						_size--;
-   				    }
-   				    else
-   				    {
-   				        // node with two children: Get the inorder
-   				        // successor (smallest in the right subtree)
-   				       node_ptr temp = minValue(root->getrChild());
-			
-   				        // Copy the inorder successor's
-   				        // data to this node
-   				        root->_content.first = temp->_content.first;
-			
-   				        // Delete the inorder successor
-   				        root->setrChild(deleteNode(root->getrChild(), temp->getFirst()));
-   				    }
-   				}
-   				if (root == NULL)
-   					return root;
-			
-				updateH(root);
-   				return (balance(root));
+					_size = size;
+					_root = root;
+					_keycomp = keycomp;
+					_alloc = alloc;
+					_valuecomp = valuecomp;
 			}
-
-			void						swap(map& other) {}
 
 		/* --------------------------------- Lookup --------------------------------- */
 
-			size_type									count(const Key& key) const {}
-			iterator									find(const Key& key) {}
-			const_iterator								find(const Key& key) const {}
-			ft::pair<iterator,iterator>					equal_range(const Key& key) {}
-			ft::pair<const_iterator, const_iterator>	equal_range(const Key& key) const {}
-			iterator									lower_bound(const Key& key) {}
-			const_iterator								lower_bound(const Key& key) const {}
-			iterator									upper_bound(const Key& key) {}
-			const_iterator								upper_bound(const Key& key) const {}
+			size_type									count(const Key& key) const
+			{
+				if (findKey(key))
+						return((size_type) 1);
+				return((size_type) 0);
+			}
+			iterator									find(const Key& key) 			{return (iterator(findKey(key)));}
+			const_iterator								find(const Key& key) const 	
+			{	
+				node_ptr tmp = findKey(key);
+				return (const_iterator(tmp));
+			}
+			ft::pair<iterator,iterator>					equal_range(const Key& key) 
+			{
+				return(ft::make_pair<iterator, iterator>(lower_bound(key),upper_bound(key)));
+			}
+			ft::pair<const_iterator, const_iterator>	equal_range(const Key& key) const
+			{
+				return(ft::make_pair<const_iterator, const_iterator>(lower_bound(key),upper_bound(key)));			
+			}
+			iterator									lower_bound(const Key& key)
+			{
+				iterator it = begin();
+				while (it != end())
+				{
+					if (_keycomp(it->first, key))
+						it++;
+					else
+						return(it);
+				}
+				return( it );
+			}
+			const_iterator								lower_bound(const Key& key) const
+			{
+				const_iterator it = begin();
+				while (it != end())
+				{
+					if (_keycomp(it->first, key))
+						it++;
+					else
+						return(it);
+				}
+				return( it );
+			}
+			iterator									upper_bound(const Key& key) 
+			{
+				iterator it = begin();
+				while (it != end())
+				{
+					if (_keycomp(it->first, key) || key == it->first)
+						it++;
+					else
+						return(it);
+				}
+				return( it );
+			}
+			const_iterator								upper_bound(const Key& key) const 
+			{
+				const_iterator it = begin();
+				while (it != end())
+				{
+					if (_keycomp(it->first, key) || key == it->first)
+						it++;
+					else
+						return(it);
+				}
+				return( it );
+			}
 
 		/* -------------------------------- Observer -------------------------------- */
 			key_compare									key_comp() const {return (key_compare());}
 			value_compare 								value_comp() const {return value_compare(key_compare());}
 
-			/* -------------------------------------------------------------------------- */
+			/* -----------------------------------tree----------------------------------- */
 			/*                                    tree                                    */
 			/* -------------------------------------------------------------------------- */
 
@@ -356,7 +392,6 @@ namespace ft
 				return (node);
 			}
 
-		/* -------------------------------- Modifier -------------------------------- */
 			void clearTree(const node_ptr &root)
 			{
 				_size = 0;
@@ -380,7 +415,7 @@ namespace ft
 				_root = insert_node(_root, pair);
 				//_root->setParent(NULL);
 			}
-			
+
 			node_ptr insert_node(node_ptr node, value_type pair)
 			{
 				if (!node)
@@ -415,20 +450,8 @@ namespace ft
 				return (balance(node));
 			}
 
-			node_ptr	remove(node_ptr node, const Key &key)
-			{
-				if (!node)
-					return (NULL);
-				//if (comp(node->getFirst(), key))
-				//{
-				//	node->setrChild()
-				//}
-			}
-
 			node_ptr findKey(const Key &key)
 			{
-				if (!key)
-					return (NULL);
 				return(findKey(key, _root));
 				
 			}
@@ -444,6 +467,57 @@ namespace ft
 				return (node);
 			}
 
+			node_ptr deleteNode(node_ptr root, const Key &key)
+			{
+				if (!root)
+					return (root);
+				if (_keycomp(key, root->getFirst()))
+					root->setlChild(deleteNode(root->getlChild(), key));
+				else if (_keycomp(root->getFirst(), key))
+					root->setrChild(deleteNode(root->getrChild(), key));
+
+				else
+   				{
+   				    // node with only one child or no child
+   				    if ( (root->getlChild() == NULL) || (root->getrChild() == NULL) )
+   				    {
+   				        node_ptr temp = root->getlChild() ? root->getlChild() : root->getrChild(); // condition ? value_if_condition_true : value_if_condition_false 
+			
+   				        // No child case
+   				        if (temp == NULL)
+   				        {
+   				            temp = root;
+   				            root = NULL;
+   				        }
+   				        else // One child case
+   				       	root = temp; // Copy the contents of
+   				                       // the non-empty child
+   						_alloc.destroy(temp);
+						_alloc.deallocate(temp,1);
+						_size--;
+   				    }
+   				    else
+   				    {
+   				        // node with two children: Get the inorder
+   				        // successor (smallest in the right subtree)
+   				       node_ptr temp = minValue(root->getrChild());
+			
+   				        // Copy the inorder successor's
+   				        // data to this node
+						temp->setrChild(root->getrChild());
+						temp->setlChild(root->getlChild());
+   				        //root->_content = ft::make_pair<const Key, mapped_type>((Key)temp->_content.first, root->_content.second);
+			
+   				        // Delete the inorder successor
+   				        root->setrChild(deleteNode(root->getrChild(), temp->getFirst()));
+   				    }
+   				}
+   				if (root == NULL)
+   					return root;
+			
+				updateH(root);
+   				return (balance(root));
+			}
 	};
 	/* -------------------------------- Operator -------------------------------- */
 		template<class Key, class T, class Compare, class Alloc>
