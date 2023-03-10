@@ -99,5 +99,4 @@ namespace ft
 		pointer		operator->( void ) { return(_pointer); }
 
 	};
-	
 };

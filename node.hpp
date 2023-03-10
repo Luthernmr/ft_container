@@ -42,41 +42,6 @@ namespace ft
         	void						setHeight(int height)						{_height = height;}
 		
 		/* -------------------------------- Surcharge ------------------------------- */
-			Node&               operator++()
-        	{
-        	    if (_rChild)
-        	    {
-        	        Node* current = _rChild;
-        	        while (current->_lChild)
-        	            current = current->_lChild;
-        	        return (*current);
-        	    }
-        	    Node* current = this;
-        	    Node* parent = _parent;
-        	    while (parent != NULL && current == parent->_rChild)
-        	    {
-        	        current = parent;
-        	        parent = parent->_parent;
-        	    }
-        	    return (*parent);
-        	}
-        	Node&               operator--()
-        	{
-        	    if (_lChild)
-        	    {
-        	        Node* current = _lChild;
-        	        while (current->_rChild)
-        	            current = current->_rChild;
-        	        return (*current);
-        	    }
-        	    Node* current = this;
-        	    Node* parent = _parent;
-        	    while (parent != NULL && current == parent->_lChild)
-        	    {
-        	        current = parent;
-        	        parent = parent->_parent;
-        	    }
-        	    return (*parent);
-			}
+		
 	};
 };

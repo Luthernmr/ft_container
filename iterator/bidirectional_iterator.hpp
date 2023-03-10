@@ -28,7 +28,7 @@ namespace ft
 		/* ------------------------- Constructor/ Destructor ------------------------ */
 			bidirectional_iterator(node_pointer begin) : _pointer(begin) {}
 			bidirectional_iterator() {_pointer = 0;}
-			//bidirectional_iterator(const bidirectional_iterator &obj){_pointer = obj._pointer;}
+			bidirectional_iterator(const bidirectional_iterator &obj){_pointer = obj._pointer;}
 			bidirectional_iterator(const iterator_traits<bidirectional_iterator<I, Node> >&obj) :_pointer(obj._pointer) {}
 			bidirectional_iterator	&operator=(const bidirectional_iterator &obj)
 			{
@@ -39,25 +39,61 @@ namespace ft
 			~bidirectional_iterator(){};
 			operator bidirectional_iterator<const I, const Node>() const  { return (bidirectional_iterator<const I, const Node>(_pointer)); }
 		/* -------------------------- Increment / Decrement ------------------------- */
-			bidirectional_iterator& operator++( void ) { _pointer++; return(*this); }
-			bidirectional_iterator& operator--( void ) { _pointer--; return(*this);	}
+			
+			bidirectional_iterator& operator++( void ) { _pointer =  next(_pointer);  return(*this); }
+			bidirectional_iterator& operator--( void ) { _pointer = prev(_pointer); return(*this);	}
 			bidirectional_iterator operator++( int )
 			{
-					bidirectional_iterator<I, Node> tmp(_pointer);
-					_pointer++;
-					return (tmp);
+				bidirectional_iterator<I, Node> tmp(_pointer);
+				++(*this);
+				return (tmp);
 			}
 			bidirectional_iterator operator--( int )
 			{
 				bidirectional_iterator<I, Node> tmp(_pointer);
-				_pointer--;
+				--(*this);
 				return (tmp);
+			}
+			
+			node_pointer               next(node_pointer current)
+        	{
+				if (!current)
+					return (NULL);
+        	    if (current->_rChild)
+        	    {
+        	        current = current->_rChild;
+        	        while (current->_lChild)
+        	            current = current->_lChild;
+        	        return (current);
+        	    }
+        	    while (current->_parent && current == current->_parent->_rChild)
+        	        current = current->_parent;
+        	    return (current->_parent);
+        	}
+        	node_pointer               prev(node_pointer current)
+        	{
+				if (!current)
+					return (NULL);
+        	    if (current->_lChild)
+        	    {
+        	        current = current->_lChild;
+        	        while (current->_rChild)
+        	            current = current->_rChild;
+        	        return (current);
+        	    }
+        	    while (current->_parent && current == current->_parent->_lChild)
+        	        current = current->_parent;
+        	    return (current->_parent);
 			}
 		
 		/* ----------------------------- Dereferencement ---------------------------- */
 			reference	operator*( void ) const 	{ return(_pointer->_content); }
-
-			pointer	operator->() const				{ return(&(_pointer->_content)); }//FIXME - second et first
+			pointer	operator->() const
+			{
+				if (_pointer)
+					return(&(_pointer->_content));
+				return (NULL);
+			}
 
 		/* --------------------------------- compare -------------------------------- */
 

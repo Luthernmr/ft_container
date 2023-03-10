@@ -130,12 +130,18 @@ namespace ft
 
 			iterator				begin()			 	{return iterator(minValue(_root));}
 			const_iterator			begin() const		{return iterator(minValue(_root));}
-			iterator				end() 				{return iterator(maxValue(_root));}
-			const_iterator			end() const 		{return iterator(maxValue(_root));}
-			reverse_iterator		rbegin() 			{return reverse_iterator(maxValue(_root));}
-			const_reverse_iterator	rbegin() const 		{return const_reverse_iterator(maxValue(_root));}
-			reverse_iterator		rend() 				{return reverse_iterator(minValue(_root));}
-			const_reverse_iterator	rend() const 		{return const_reverse_iterator(minValue(_root));}
+			iterator				end() 			
+			{
+				return (iterator(maxValue(_root)->_rChild));
+			}
+			const_iterator			end() const 		
+			{
+				return iterator(maxValue(_root)->_rChild);
+			}
+			reverse_iterator		rbegin() 			{return reverse_iterator(begin());}
+			const_reverse_iterator	rbegin() const 		{return const_reverse_iterator(begin());}
+			reverse_iterator		rend() 				{return reverse_iterator(end());}
+			const_reverse_iterator	rend() const 		{return const_reverse_iterator(end());}
 
 		/* -------------------------------- Capacity -------------------------------- */
 
@@ -157,6 +163,7 @@ namespace ft
 				if (it == NULL)
 					tmp = true;
 				insert_help(value);
+				
 				ft::pair<iterator, bool> pair = ft::make_pair(iterator(findKey(value.first)), tmp);
 				return(pair);
 			}
@@ -315,6 +322,7 @@ namespace ft
 				node_ptr tmp = node;
 				if (!tmp)
 					return(NULL);
+				
 				while (tmp->getlChild())
 					tmp = tmp->getlChild();
 				return (tmp);
@@ -339,6 +347,7 @@ namespace ft
 				
 				updateH(node);
 				updateH(newRoot);
+
 				return (newRoot);
 			}
 
@@ -359,6 +368,7 @@ namespace ft
 			{
 				if (!node)
 					return;
+				
 				node->setHeight(0);
 				if (node->getlChild())
 					node->setHeight(node->getlChild()->getHeight() + 1);
@@ -400,6 +410,7 @@ namespace ft
 						node->setrChild(r_rotate(node->getrChild()));
 					return (l_rotate(node));
 				}
+
 				return (node);
 			}
 
@@ -427,15 +438,12 @@ namespace ft
 				_root->setParent(NULL);
 			}
 
-			node_ptr insert_node(node_ptr node, value_type pair)
+			node_ptr insert_node(node_ptr node, value_type pair)//
 			{
 				if (!node)
 				{	
 					node = _alloc.allocate(1);
-					try
-					{
-						_alloc.construct(node, Node<value_type>(pair)); 
-					}
+					try{ _alloc.construct(node, Node<value_type>(pair)); }
 					catch(...)
 					{
 						_alloc.deallocate(node, 1);
@@ -486,41 +494,31 @@ namespace ft
 					root->setlChild(deleteNode(root->getlChild(), key));
 				else if (_keycomp(root->getFirst(), key))
 					root->setrChild(deleteNode(root->getrChild(), key));
-
 				else
    				{
-   				    // node with only one child or no child
-   				    if ( (root->getlChild() == NULL) || (root->getrChild() == NULL) )
+   				    if ( (root->getlChild() == NULL) || (root->getrChild() == NULL) ) // node with only one child or no child
    				    {
    				        node_ptr temp = root->getlChild() ? root->getlChild() : root->getrChild(); // condition ? value_if_condition_true : value_if_condition_false 
-			
-   				        // No child case
-   				        if (temp == NULL)
+   				        if (temp == NULL)// No child case
    				        {
    				            temp = root;
    				            root = NULL;
    				        }
-   				        else // One child case
-   				       	root = temp; // Copy the contents of
-   				                       // the non-empty child
+   				        else
+						{
+   				       		root = temp; // Copy the contents of the non-empty child
+						} // One child case
    						_alloc.destroy(temp);
 						_alloc.deallocate(temp,1);
 						_size--;
    				    }
    				    else
    				    {
-   				        // node with two children: Get the inorder
-   				        // successor (smallest in the right subtree)
-   				       node_ptr temp = minValue(root->getrChild());
-			
-   				        // Copy the inorder successor's
-   				        // data to this node
-						temp->setrChild(root->getrChild());
+   				       	node_ptr temp = minValue(root->getrChild());// node with two children: Get the inorder successor (smallest in the right subtree)
+						temp->setrChild(root->getrChild());// Copy the inorder successor's data to this node
 						temp->setlChild(root->getlChild());
-   				        //root->_content = ft::make_pair<const Key, mapped_type>((Key)temp->_content.first, root->_content.second);
-			
-   				        // Delete the inorder successor
-   				        root->setrChild(deleteNode(root->getrChild(), temp->getFirst()));
+   				        root->_content.second = temp->_content.second;//REVIEW - 
+   				        root->setrChild(deleteNode(root->getrChild(), temp->getFirst())); // Delete the inorder successor
    				    }
    				}
    				if (root == NULL)
