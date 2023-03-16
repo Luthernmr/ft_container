@@ -1,13 +1,6 @@
 #pragma once
 
-#include <memory>
-#include <stdexcept>
-#include <map>
-#include "pair.hpp"
-#include "node.hpp"
-#include "iterator/reverse_iterator.hpp"
-#include "iterator/bidirectional_iterator.hpp"
-#include "iterator/lexicographical_compare.hpp"
+#include "../includes/utils.hpp"
 
 namespace ft
 {
@@ -111,29 +104,13 @@ namespace ft
 			}
 		/* ---------------------------------- Acces --------------------------------- */
 
-			void printTree(node_ptr root, std::string indent, bool last)
-			{
-			  if (root) {
-			    std::cout << indent;
-			    if (last) {
-			      std::cout << "R----";
-			      indent += "   ";
-			    } else {
-			      std::cout << "L----";
-			      indent += "|  ";
-			    }
-			    std::cout << root->_content.first << std::endl;
-			    printTree(root->_lChild, indent, false);
-			    printTree(root->_rChild, indent, true);
-			  }
-			}
 
 			mapped_type&			at(const Key& key) 
 			{
 				node_ptr node = findKey(key);
 				if (!node)
 					throw (std::out_of_range("out_of_range"));
-				return(node->getSecond());
+				return(node->_content.second);
 			}
 			const mapped_type&		at(const Key& key) const 
 			{
@@ -161,10 +138,7 @@ namespace ft
 
 			iterator				end() 			
 			{
-					//_root() = _root;
-					//_root->_parent = meta;
 					return (iterator(_end_ptr));
-				//return (_root->_rChild);
 			}
 			const_iterator			end() const 		
 			{
@@ -227,7 +201,6 @@ namespace ft
 
 			iterator					erase(iterator pos) 
 			{
-				//iterator tmp = pos;
 				deleteNode(pos.getPtr());
 				return (pos);
 			}
@@ -374,7 +347,24 @@ namespace ft
 					tmp = tmp->_rChild;
 				return (tmp);
 			}
-		public: //NOTE - temp public
+		//public: //NOTE - temp public
+			void printTree(node_ptr root, std::string indent, bool last)
+			{
+			  if (root) {
+			    std::cout << indent;
+			    if (last) {
+			      std::cout << "R----";
+			      indent += "   ";
+			    } else {
+			      std::cout << "L----";
+			      indent += "|  ";
+			    }
+			    std::cout << root->_content.first << std::endl;
+			    printTree(root->_lChild, indent, false);
+			    printTree(root->_rChild, indent, true);
+			  }
+			}
+
 			node_ptr&	_root()
 			{
 				return (_end_ptr->_lChild);
@@ -536,20 +526,9 @@ namespace ft
 					return (node);
 				}
 				if (_keycomp(node->_content.first, pair.first))
-				{
 					node->_rChild = insert_node(node->_rChild,node, pair);
-					//if (node->_rChild->_parent)
-						//std::cout << "node R : [" << node->_rChild->_content.first << "] has parent set: " << node->_rChild->_parent->_content.first << "\n";
-		
-				}
 				else if (_keycomp(pair.first, node->_content.first))
-				{
 					node->_lChild = insert_node(node->_lChild, node, pair);
-					//if (node->_lChild->_parent)
-					//	std::cout << "node L : [" << node->_lChild->_content.first << "] has parent set: " << node->_lChild->_parent->_content.first << "\n";
-
-
-				}
 				else 
 					return (node);
 
@@ -644,7 +623,6 @@ namespace ft
 					balance_all(temp);
    				}
 				del_node(root);
-				//printTree(_end_ptr, " ", true);
 			}
 	};
 	/* -------------------------------- Operator -------------------------------- */

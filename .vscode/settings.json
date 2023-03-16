@@ -34,6 +34,8 @@
 		"typeinfo": "cpp",
 		"list": "cpp",
 		"map": "cpp",
-		"cstddef": "cpp"
+		"cstddef": "cpp",
+		"ctime": "cpp",
+		"stack": "cpp"
 	}
 }

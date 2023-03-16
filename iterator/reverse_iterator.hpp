@@ -1,10 +1,6 @@
-#pragma once
-
-#include <memory>
+#pragma once 
 
 #include "iterator_traits.hpp"
-#include <iostream>
-
 
 namespace ft
 {
