@@ -6,12 +6,14 @@
 
 namespace ft
 {
-	template <class T>
+	template <class T> 
 	struct Node
 	{
 			typedef T									pair_type;
+			typedef ft::pair<long int, int> 			value_type;
 			typedef typename pair_type::first_type		first_type;
 			typedef typename pair_type::second_type		second_type;
+			typedef	ft::pair<long int, int> 			end_type;
 
 			pair_type									_content;
 			size_t 										_height;
@@ -19,11 +21,13 @@ namespace ft
 			Node 										*_lChild;
 			Node 										*_rChild;
 
+
 		public:
 			Node(pair_type &content) : 
-					_content(content), _height(1), _parent(NULL), _lChild(NULL), _rChild(NULL) {}
+					_content(ft::make_pair(content.first, content.second)), _height(1), _parent(NULL), _lChild(NULL), _rChild(NULL){}
 			Node(pair_type &content, Node *parent) : 
-					_content(content), _height(1), _parent(parent), _lChild(NULL), _rChild(NULL) {}
+					_content(ft::make_pair(content.first, content.second)), _height(1), _parent(parent), _lChild(NULL), _rChild(NULL) {
+					}
 
 
 		/* --------------------------------- Getter --------------------------------- */

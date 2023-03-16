@@ -9,7 +9,6 @@
 #include "iterator/bidirectional_iterator.hpp"
 #include "iterator/lexicographical_compare.hpp"
 
-using namespace ft;
 namespace ft
 {
 	template < class Key,  class T, class Compare = std::less<Key>, class Alloc = std::allocator<Node<ft::pair<const Key, T> > > >
@@ -21,11 +20,12 @@ namespace ft
         	typedef ft::pair<const key_type, mapped_type> 												value_type;
         	typedef Compare 																			key_compare;
         	typedef Alloc																				allocator_type; 
+
 		private:
 			typedef	ft::Node<value_type>																node_type;
 			typedef	ft::Node<value_type>*																node_ptr;
 			key_compare																					_keycomp;
-			node_ptr 																					_root;
+			node_ptr																					_end_ptr;
 			size_t																						_size;
 			allocator_type																				_alloc;
 
@@ -43,6 +43,8 @@ namespace ft
 
         	typedef typename ft::reverse_iterator<iterator> 											reverse_iterator;
         	typedef typename ft::reverse_iterator<const_iterator> 										const_reverse_iterator;
+
+
 			
 	
 		public:
@@ -69,28 +71,38 @@ namespace ft
 		/* ------------------------- Constructor / Destrucor ------------------------ */
 
 			//map();
-			map(const Compare& comp = key_compare(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc), _valuecomp(comp){}
-
-			template< class InputIt >
-			map(InputIt first, InputIt last,const Compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):  _keycomp(comp), _root(NULL), _size(0), _alloc(alloc), _valuecomp(comp) {insert(first,last);}
-
-			map(const map& obj) : _keycomp(obj._keycomp), _root(obj._root), _size(obj._size), _alloc(obj._alloc), _valuecomp(obj._valuecomp) 
+			map(const Compare& comp = key_compare(), const Alloc& alloc = allocator_type()):  _keycomp(comp), _end_ptr(NULL), _size(0), _alloc(alloc), _valuecomp(comp)
 			{
-				const_iterator it = obj.begin();
-				while (it != obj.end())
-					insert(*it++);
+				value_type tmp;
+				_end_ptr = _alloc.allocate(1);	
+				_alloc.construct(_end_ptr, Node<value_type>(tmp));	
 			}
 
-			~map() {clearTree(_root);}
+			template< class InputIt >
+			map(InputIt first, InputIt last,const Compare& comp = key_compare(), const allocator_type& alloc = allocator_type()):  _keycomp(comp), _end_ptr(NULL), _size(0), _alloc(alloc), _valuecomp(comp) 
+			{
+				value_type tmp;
+				_end_ptr = _alloc.allocate(1);	
+				_alloc.construct(_end_ptr, Node<value_type>(tmp));	
+				insert(first,last);
+			}
+
+			map(const map& obj) : _keycomp(obj._keycomp), _size(0), _alloc(obj._alloc), _valuecomp(obj._valuecomp) 
+			{
+
+				value_type tmp;
+				_end_ptr = _alloc.allocate(1);	
+				_alloc.construct(_end_ptr, Node<value_type>(tmp));	
+				*this = obj;
+			}
+
+			~map() {clear();}
 
 			map& operator=(const map& obj)
 			{
-				_keycomp = obj._keycomp;
-				_root = obj._root;
-				_size = obj._size;
-				_alloc = obj._alloc;
-				_valuecomp = obj._valuecomp;
-				return *this;
+				clear();
+				insert(obj.begin(), obj.end());
+				return (*this);
 			}
 		
 			allocator_type get_allocator() const
@@ -98,6 +110,23 @@ namespace ft
 				return (_alloc);
 			}
 		/* ---------------------------------- Acces --------------------------------- */
+
+			void printTree(node_ptr root, std::string indent, bool last)
+			{
+			  if (root) {
+			    std::cout << indent;
+			    if (last) {
+			      std::cout << "R----";
+			      indent += "   ";
+			    } else {
+			      std::cout << "L----";
+			      indent += "|  ";
+			    }
+			    std::cout << root->_content.first << std::endl;
+			    printTree(root->_lChild, indent, false);
+			    printTree(root->_rChild, indent, true);
+			  }
+			}
 
 			mapped_type&			at(const Key& key) 
 			{
@@ -115,55 +144,66 @@ namespace ft
 			}
 			T&			operator[](const Key& key)
 			{
-				node_ptr node = findKey(key);
-				if (!node)
-				{
-					insert(value_type(key, mapped_type()));
-					node = findKey(key);
-				}
-				return (node->_content.second);
+				iterator	it = find(key);
+				if (it != end())
+					return ((*it).second);
+				else
+					return (insert(ft::make_pair(key, T())).first->second);
 			}
-
 		
+		/* -------------------------------- Capacity -------------------------------- */
+
+			bool					empty() const 		{return (_size == 0);}
+			size_type				size() const 		{return (_size);}
+			size_type				max_size() const 	{return ( _alloc.max_size());}
 
 		/* -------------------------------- Iterators ------------------------------- */
 
-			iterator				begin()			 	{return iterator(minValue(_root));}
-			const_iterator			begin() const		{return iterator(minValue(_root));}
 			iterator				end() 			
 			{
-				return (iterator(maxValue(_root)->_rChild));
+					//_root() = _root;
+					//_root->_parent = meta;
+					return (iterator(_end_ptr));
+				//return (_root->_rChild);
 			}
 			const_iterator			end() const 		
 			{
-				return iterator(maxValue(_root)->_rChild);
+					return (const_iterator(_end_ptr));
 			}
-			reverse_iterator		rbegin() 			{return reverse_iterator(begin());}
-			const_reverse_iterator	rbegin() const 		{return const_reverse_iterator(begin());}
-			reverse_iterator		rend() 				{return reverse_iterator(end());}
-			const_reverse_iterator	rend() const 		{return const_reverse_iterator(end());}
+			
+			iterator				begin()			 	
+			{
+				if (!_root())
+					return (iterator(_end_ptr));
+				return iterator(minValue(_root()));
+			}
+			const_iterator			begin() const		
+			{
+				if (!_root())
+					return (const_iterator(_end_ptr));
+				return const_iterator(minValue(_root()));
+			}
+			reverse_iterator		rbegin() 			{return reverse_iterator(end());}
+			const_reverse_iterator	rbegin() const 		{return const_reverse_iterator(end());}
+			reverse_iterator		rend() 				{return reverse_iterator(begin());}
+			const_reverse_iterator	rend() const 		{return const_reverse_iterator(begin());}
 
-		/* -------------------------------- Capacity -------------------------------- */
-
-			bool					empty() const 		{return (begin() == end());}
-			size_type				size() const 		{return (_size);}
-			size_type				max_size() const 	{return ( _alloc.max_size());}
 
 		/* -------------------------------- Modifier -------------------------------- */
 
 			void					clear() 
 			{
-				clearTree(_root);
+				clearTree(_root());
+				_root() = NULL;
 			}
 
 			ft::pair<iterator, bool>	insert(const value_type& value) // The pair::second element (bool) in the pair is set to true if a new element was inserted or false if an equivalent element already existed.
 			{
 				bool tmp = false;
-				iterator it = findKey(value.first);
-				if (it == NULL)
+				node_ptr it = findKey(value.first);
+				if (it == _end_ptr)
 					tmp = true;
 				insert_help(value);
-				
 				ft::pair<iterator, bool> pair = ft::make_pair(iterator(findKey(value.first)), tmp);
 				return(pair);
 			}
@@ -171,7 +211,7 @@ namespace ft
 			iterator					insert(iterator pos, const value_type& value) 
 			{
 					(void)	pos;
-					insert_help(value);
+					insert(value);
 					return(findKey(value.first));
 			}
 
@@ -179,72 +219,68 @@ namespace ft
 			void 						insert(InputIt first, InputIt last) 
 			{
 				while (first != last)
-					{
-						insert_help(*first);
-						first++;
-					}
+				{
+					insert(*first);
+					first++;
+				}
 			}
 
 			iterator					erase(iterator pos) 
 			{
-				iterator tmp = pos;
-				deleteNode(_root,(*pos).first);
+				//iterator tmp = pos;
+				deleteNode(pos.getPtr());
 				return (pos);
 			}
 
 			iterator					erase(iterator first, iterator last) 
 			{
+				iterator tmp = first;
 				while(first != last)
 				{
-					if (first->first)
-					{
-						iterator tmp = first;
-						erase((first++)->first);
-						return (tmp);
-					}
+					++tmp;
+					deleteNode(first.getPtr());
+					first = tmp;
 				}
-				return (NULL);
+				return (tmp);
 			}
 
 			size_type					erase(const Key &key) 
 			{
-				if(findKey(key))
-					{
-						deleteNode(_root, key);
-						return (1);
-					}
-					return(0);
+				iterator it = findKey(key); 
+				if(it != end())
+				{
+					deleteNode(it.getPtr());
+					return (1);
+				}
+				return(0);
 			}
 
 
 			void						swap(map& other)
 			{
-					node_ptr 		root = other._root;
-					size_type 		size = other._size;
-					key_compare		keycomp = other._keycomp;
-					allocator_type	alloc = other._alloc;
-					value_compare	valuecomp = other._valuecomp;
-					other._size = size;
-					other._root = root;
-					other._keycomp = keycomp;
-					other._alloc = alloc;
-					other._valuecomp = valuecomp;
 
-					_size = size;
-					_root = root;
-					_keycomp = keycomp;
-					_alloc = alloc;
-					_valuecomp = valuecomp;
+				size_type tmp_size = _size;
+				node_ptr end_l = _root();
+				
+				_root() = other._root();
+				_size = other._size;
+		
+				other._root() = end_l;
+				other._size = tmp_size;
+				
+				if (_root())
+					_root()->_parent = _end_ptr;
+			
+				if (other._root())
+					other._root()->_parent = other._end_ptr;
+		
 			}
 
 		/* --------------------------------- Lookup --------------------------------- */
 
 			size_type									count(const Key& key) const
 			{
-				node_ptr tmp = findKey(key);
-				if (tmp)
-						return((size_type) 1);
-				return((size_type) 0);
+				return(find(key) != end());
 			}
 			iterator									find(const Key& key) 			{return (iterator(findKey(key)));}
 			const_iterator								find(const Key& key) const 	
@@ -317,14 +353,15 @@ namespace ft
 			/*                                    tree                                    */
 			/* -------------------------------------------------------------------------- */
 
+			
+		private :
 			node_ptr	minValue(node_ptr node) const
 			{
 				node_ptr tmp = node;
 				if (!tmp)
 					return(NULL);
-				
-				while (tmp->getlChild())
-					tmp = tmp->getlChild();
+				while (tmp->_lChild != NULL)
+					tmp = tmp->_lChild;
 				return (tmp);
 			}
 			
@@ -333,18 +370,50 @@ namespace ft
 				node_ptr tmp = node;
 				if (!tmp)
 					return(NULL);
-				while (tmp->getrChild())
-					tmp = tmp->getrChild();
+				while (tmp->_rChild != NULL)
+					tmp = tmp->_rChild;
 				return (tmp);
 			}
-			
+		public: //NOTE - temp public
+			node_ptr&	_root()
+			{
+				return (_end_ptr->_lChild);
+			}
+
+			node_ptr	_root() const
+			{
+				return (_end_ptr->_lChild);
+			}
+			node_ptr&	_end()
+			{
+				return (_end_ptr);
+			}
+
+			node_ptr	_end() const
+			{
+				return (_end_ptr);
+			}
+
 		/* ----------------------------- Simple Rotation ---------------------------- */
 			node_ptr r_rotate(node_ptr node)
 			{
+				if (!node)
+					return (node);
 				node_ptr newRoot = node->getlChild();
-				node->setlChild(newRoot->getrChild());
-				newRoot->setrChild(node);
+				node_ptr subRnewRoot = newRoot->getrChild();
 				
+				if (node == _root())
+					_root() = newRoot;
+				
+				newRoot->setrChild(node);
+				newRoot->setParent(node->getParent());
+
+				node->setlChild(subRnewRoot);
+				node->setParent(newRoot);
+			
+				if (subRnewRoot)
+					subRnewRoot->_parent = node;
+
 				updateH(node);
 				updateH(newRoot);
 
@@ -354,9 +423,22 @@ namespace ft
 			node_ptr l_rotate(node_ptr node)
 			{
 
+				if (!node)
+					return (node);
 				node_ptr newRoot = node->getrChild();
-				node->setrChild(newRoot->getlChild());
+				node_ptr subRnewRoot = newRoot->getlChild();
+
+				if (node == _root())
+					_root() = newRoot;
+				
 				newRoot->setlChild(node);
+				newRoot->setParent(node->getParent());
+
+				node->setrChild(subRnewRoot);
+				node->setParent(newRoot);
+			
+				if (subRnewRoot)
+					subRnewRoot->_parent = node;
 				
 				updateH(node);
 				updateH(newRoot);
@@ -369,12 +451,12 @@ namespace ft
 				if (!node)
 					return;
 				
-				node->setHeight(0);
-				if (node->getlChild())
-					node->setHeight(node->getlChild()->getHeight() + 1);
-				if (node->getrChild())
-					if (node->getrChild()->getHeight() >= node->getHeight())
-						node->setHeight(node->getrChild()->getHeight() + 1);
+				node->_height = 1;
+				if (node->_lChild)
+					node->_height = node->_lChild->_height + 1;
+				if (node->_rChild)
+					if (node->_rChild->_height >= node->_height)
+						node->_height = node->_rChild->_height + 1;
 			}
 
 		/* -------------------------------- Balancer -------------------------------- */
@@ -400,50 +482,51 @@ namespace ft
 					return(NULL);
 				else if (diffH(node) > 1)
 				{
-					if (diffH(node->getlChild()) < 0)
-						node->setlChild(l_rotate(node->getlChild()));
+
+					if (diffH(node->_lChild) < 0)
+						node->_lChild = l_rotate(node->_lChild);
 					return (r_rotate(node));
 				}
 				else if (diffH(node) < -1)
 				{
-					if (diffH(node->getrChild()) > 0)
-						node->setrChild(r_rotate(node->getrChild()));
+					if (diffH(node->_rChild) > 0)
+						node->_rChild = r_rotate(node->_rChild);
 					return (l_rotate(node));
 				}
 
 				return (node);
 			}
 
-			void clearTree(const node_ptr &root)
+			void clearTree(node_ptr &root)
 			{
 				_size = 0;
- 		  		if(root != NULL)
-  		 		{
-		 			clearTree(root->getrChild());
-		 			clearTree(root->getlChild());
-					_alloc.destroy(root);
-					_alloc.deallocate(root, 1);
-   				}
+				if (!root)
+					return;
+ 		  		if(root->_lChild)
+		 			clearTree(root->_lChild);
+  		 		if (root->_rChild)
+		 			clearTree(root->_rChild);
+				_alloc.destroy(root);
+				_alloc.deallocate(root, 1);
+				root = NULL;
 			}
 
 			void	insert_help(const Key& key, const mapped_type& val)
 			{	
-				_root = insert_node(_root, (ft::make_pair(key, val)));
-				_root->setParent(NULL);	
+				_root() = insert_node(_root(), _end_ptr, (ft::make_pair(key, val)));
 			}
 
 			void	insert_help(const value_type pair)
 			{
-				_root = insert_node(_root, pair);
-				_root->setParent(NULL);
+				_root() = insert_node(_root(), _end_ptr, pair);
 			}
 
-			node_ptr insert_node(node_ptr node, value_type pair)//
+			node_ptr insert_node(node_ptr node,node_ptr parent, value_type pair)//
 			{
 				if (!node)
 				{	
 					node = _alloc.allocate(1);
-					try{ _alloc.construct(node, Node<value_type>(pair)); }
+					try{ _alloc.construct(node, Node<value_type>(pair, parent)); }
 					catch(...)
 					{
 						_alloc.deallocate(node, 1);
@@ -452,18 +535,24 @@ namespace ft
 					_size++;
 					return (node);
 				}
-				else if (_keycomp(node->getFirst(), pair.first))
+				if (_keycomp(node->_content.first, pair.first))
 				{
-					node->setrChild(insert_node(node->getrChild(), pair));
-					if (node->getrChild())
-						node->getrChild()->setParent(node);
+					node->_rChild = insert_node(node->_rChild,node, pair);
+					//if (node->_rChild->_parent)
+						//std::cout << "node R : [" << node->_rChild->_content.first << "] has parent set: " << node->_rChild->_parent->_content.first << "\n";
+		
 				}
-				else if (_keycomp(pair.first, node->getFirst()))
+				else if (_keycomp(pair.first, node->_content.first))
 				{
-					node->setlChild(insert_node(node->getlChild(), pair));
-					if (node->getlChild())
-						node->getlChild()->setParent(node);
+					node->_lChild = insert_node(node->_lChild, node, pair);
+					//if (node->_lChild->_parent)
+					//	std::cout << "node L : [" << node->_lChild->_content.first << "] has parent set: " << node->_lChild->_parent->_content.first << "\n";
+
+
 				}
+				else 
+					return (node);
+
 				updateH(node);
 
 				return (balance(node));
@@ -471,61 +560,91 @@ namespace ft
 
 			node_ptr findKey(const Key &key) const
 			{
-				return(findKey(key, _root));
+				return(findKey(key, _root()));
 				
 			}
 
 			node_ptr findKey(const Key &key, node_ptr node) const
 			{
 				if (!node)
-					return (NULL);
-				if (_keycomp(key, node->getFirst()))
-					return(findKey(key, node->getlChild()));
-				else if (_keycomp(node->getFirst(), key))
-					return (findKey(key, node->getrChild()));
+					return (_end_ptr);
+				if (_keycomp(key, node->_content.first))
+					return(findKey(key, node->_lChild));
+				else if (_keycomp(node->_content.first, key))
+					return (findKey(key, node->_rChild));
 				return (node);
 			}
-
-			node_ptr deleteNode(node_ptr root, const Key &key)
+			void	del_node(node_ptr node)
 			{
-				if (!root)
-					return (root);
-				if (_keycomp(key, root->getFirst()))
-					root->setlChild(deleteNode(root->getlChild(), key));
-				else if (_keycomp(root->getFirst(), key))
-					root->setrChild(deleteNode(root->getrChild(), key));
-				else
+				_alloc.destroy(node);
+				_alloc.deallocate(node,1);
+				_size--;
+			}
+
+			void	reattach(node_ptr node, node_ptr new_node)
+			{
+				if (node == _root())
+					_root() = new_node;
+				else if (node == node->_parent->_lChild)
+					node->_parent->_lChild = new_node;
+				else if (node == node->_parent->_rChild)
+					node->_parent->_rChild = new_node;
+				if (new_node != NULL)
+					new_node->_parent = node->_parent;
+			}
+
+			void	balance_all(node_ptr node)
+			{
+				if (node == NULL)
+					return ;
+				//while (node != _end_ptr)//FIXME - infinit loop in tricky erase
+				//{
+				//	updateH(node);
+				//	balance(node);
+				//	node = node->_parent;
+				//	std::cout << "her\n";
+				//}
+			}
+
+			void deleteNode(node_ptr root)
+			{
+   				node_ptr temp;
+				if(root == NULL)
+					return;
+   				if (!root->_lChild)
+				{
+					temp = root;
+					reattach(root, root->_rChild);
+					balance_all(temp);
+				}
+				else if (!root->_rChild)
+				{
+					temp = root;
+					reattach(root, root->_lChild);
+					balance_all(temp);
+				}
+   				else	
    				{
-   				    if ( (root->getlChild() == NULL) || (root->getrChild() == NULL) ) // node with only one child or no child
-   				    {
-   				        node_ptr temp = root->getlChild() ? root->getlChild() : root->getrChild(); // condition ? value_if_condition_true : value_if_condition_false 
-   				        if (temp == NULL)// No child case
-   				        {
-   				            temp = root;
-   				            root = NULL;
-   				        }
-   				        else
-						{
-   				       		root = temp; // Copy the contents of the non-empty child
-						} // One child case
-   						_alloc.destroy(temp);
-						_alloc.deallocate(temp,1);
-						_size--;
-   				    }
-   				    else
-   				    {
-   				       	node_ptr temp = minValue(root->getrChild());// node with two children: Get the inorder successor (smallest in the right subtree)
-						temp->setrChild(root->getrChild());// Copy the inorder successor's data to this node
-						temp->setlChild(root->getlChild());
-   				        root->_content.second = temp->_content.second;//REVIEW - 
-   				        root->setrChild(deleteNode(root->getrChild(), temp->getFirst())); // Delete the inorder successor
-   				    }
+					iterator it = begin();
+					while (it.getPtr() != root)
+						it++;
+					it++;
+   				   	node_ptr newRoot = it.getPtr();
+					temp = newRoot;
+					if (newRoot->_parent != root)
+					{
+						temp = newRoot->_parent;
+						reattach(newRoot, newRoot->_rChild);
+						newRoot->_rChild = root->_rChild;
+						newRoot->_rChild->_parent = newRoot;
+					}
+					reattach(root, newRoot);
+					newRoot->_lChild = root->_lChild;
+					newRoot->_lChild->_parent = newRoot;
+					balance_all(temp);
    				}
-   				if (root == NULL)
-   					return root;
-			
-				updateH(root);
-   				return (balance(root));
+				del_node(root);
+				//printTree(_end_ptr, " ", true);
 			}
 	};
 	/* -------------------------------- Operator -------------------------------- */
