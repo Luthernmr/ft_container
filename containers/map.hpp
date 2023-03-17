@@ -1,6 +1,13 @@
 #pragma once
 
-#include "../includes/utils.hpp"
+#include <memory>
+#include <stdexcept>
+#include <map>
+#include "../includes/pair.hpp"
+#include "../includes/node.hpp"
+#include "../includes/lexicographical_compare.hpp"
+#include "../iterator/reverse_iterator.hpp"
+#include "../iterator/bidirectional_iterator.hpp"
 
 namespace ft
 {

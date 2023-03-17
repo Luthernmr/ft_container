@@ -1,4 +1,7 @@
 #pragma		once
+
+#include <algorithm>
+
 namespace ft
 {
 //False type -----------------------------------------------------------------//

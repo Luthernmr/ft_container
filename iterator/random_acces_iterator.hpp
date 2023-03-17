@@ -85,10 +85,10 @@ namespace ft
 		{ random_access_iterator tmp = rhs; tmp -= n; return tmp;	}
 
 		friend random_access_iterator	operator+( difference_type n , random_access_iterator &rhs)
-		{ random_access_iterator tmp =rhs; tmp += n; return tmp; }
+		{ random_access_iterator tmp = rhs; tmp += n; return tmp; }
 
 		friend random_access_iterator	operator+( random_access_iterator &rhs, difference_type n)
-		{ random_access_iterator tmp =rhs; tmp += n; return tmp; }
+		{ random_access_iterator tmp = rhs; tmp += n; return tmp; }
 		
 		friend difference_type	operator-(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) { return (lhs._pointer - rhs._pointer); }
 		friend difference_type	operator+(const random_access_iterator<I> &lhs, const random_access_iterator<I> &rhs) { return (lhs._pointer + rhs._pointer); }

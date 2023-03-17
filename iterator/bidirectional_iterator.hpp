@@ -1,6 +1,7 @@
 #pragma once
 
 #include "iterator_base.hpp"
+
 namespace ft
 {
 	template<class I, class Node>

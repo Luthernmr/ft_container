@@ -293,6 +293,10 @@ namespace ft
 				_myAlloc = tmpAlloc;
 			}
 			/* -------------------------------- Allocator ------------------------------- */
+			allocator_type get_allocator() const
+			{
+				return (_myAlloc);
+			}
 	};
 		/* ---------------------- Non-member function overloads --------------------- */
 		template< class T, class Alloc >

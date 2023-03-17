@@ -1,5 +1,4 @@
 #pragma once
-
 #include "vector.hpp"
 
 namespace ft
@@ -15,54 +14,54 @@ namespace ft
         typedef typename Container::const_reference	const_reference;
 
     protected:
-        container_type _array;
+        container_type c;
 
     public:
 	/* ------------------ Constructor/Destructor/Assign content ----------------- */
         explicit stack(const container_type& cont = container_type())
-		: _array(cont) {}
+		: c(cont) {}
 
 		~stack() {}
 
 		stack&				operator=(const stack& other)
 		{
-			_array = other._array;
+			c = other.c;
 			return (*this);
 		}
 
 	/* ----------------------------- Element Access ----------------------------- */
-        value_type&			top() {return (_array.back());}
-        const value_type&	top() const {return (_array.back());}
+        value_type&			top() {return (c.back());}
+        const value_type&	top() const {return (c.back());}
 
 	/* -------------------------------- Capacity -------------------------------- */
-        bool				empty() const {return (_array.empty());}
-        size_type			size() const {return (_array.size());}
+        bool				empty() const {return (c.empty());}
+        size_type			size() const {return (c.size());}
 
 	/* -------------------------------- Modifiers ------------------------------- */
-        void				push(const value_type& value) {_array.push_back(value);}
-        void				pop() {_array.pop_back();}
+        void				push(const value_type& value) {c.push_back(value);}
+        void				pop() {c.pop_back();}
 
 	/* -------------------------------- Operators ------------------------------- */
 		friend bool			operator==(const stack<value_type, container_type>& lhs,
 										const stack<value_type, container_type>& rhs)
-		{ return (lhs._array == rhs._array); }
+		{ return (lhs.c == rhs.c); }
 
 		friend bool			operator!=(const stack<value_type, container_type>& lhs,
 										const stack<value_type, container_type>& rhs)
-		{ return (!(lhs._array == rhs._array)); }
+		{ return (!(lhs.c == rhs.c)); }
 
 		friend bool			operator<(const stack<value_type, container_type>& lhs,
 										const stack<value_type, container_type>& rhs)
-		{ return (lhs._array < rhs._array); }
+		{ return (lhs.c < rhs.c); }
 		friend bool			operator<=(const stack<value_type, container_type>& lhs,
 										const stack<value_type, container_type>& rhs)
-		{ return (lhs._array <= rhs._array); }
+		{ return (lhs.c <= rhs.c); }
 		friend bool			operator>(const stack<value_type, container_type>& lhs,
 										const stack<value_type, container_type>& rhs)
-		{ return (lhs._array > rhs._array); }
+		{ return (lhs.c > rhs.c); }
 		friend bool			operator>=(const stack<value_type, container_type>& lhs,
 										const stack<value_type, container_type>& rhs)
-		{ return (lhs._array >= rhs._array); }
+		{ return (lhs.c >= rhs.c); }
     };
 
 }
