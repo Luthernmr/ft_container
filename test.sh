@@ -21,7 +21,10 @@ timeSTD="traces/time/timeSTD.out"
 
 diffFile="traces/diff/diff.out"
 
+make
 ./a.out ft > $fileFT
+
+make
 ./a.out std > $fileSTD
 
 diff $fileFT $fileSTD  | grep microsec > $diffFile

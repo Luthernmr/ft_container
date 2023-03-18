@@ -1,19 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: mlazzare <mlazzare@student.s19.be>         +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/03/04 08:57:16 by mlazzare          #+#    #+#             */
-/*   Updated: 2022/05/20 22:46:43 by mlazzare         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include <iostream>
 #include <string>
 #include <deque>
-#include "utils.cpp"
 
 #ifndef STL
 # define STL 0
@@ -862,7 +849,7 @@ namespace mapt
 		//// assign some values to array
 		//psize = sizeof(ft::map<char,int>::value_type)*5;
 //
-		//std::cout << "The allocated array has a size of " << psize << " bytes.\n";
+		std::cout << "The allocated array has a size of  bytes.\n";
 //
 		//mymap.get_allocator().deallocate(p,5);
 	}
@@ -1026,6 +1013,60 @@ void	stack_tests(void)
 	test_it(stackt::ft_push_pop, "push and pop");
 	test_it(stackt::ft_relational_operators, "operators");
 	//test_it(stack::ft_swaps, "swap (stack)");
+}
+
+void	test_header(std::string title)
+{
+	std::cout << "---------------------------\n";
+	int space = (20 - title.length()) / 2;
+	std::cout << "----";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "\x1B[33m" << title << "\033[0m";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "----";
+    std::cout << "\n---------------------------\n";
+}
+
+void	container_header(std::string title)
+{
+	std::cout << "---------------------------\n";
+	int space = (20 - title.length()) / 2;
+	std::cout << "----";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "\x1B[31m" << title << "\033[0m";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "----";
+    std::cout << "\n---------------------------\n";
+}
+
+void	print_timestamp(struct timeval start, struct timeval end)
+{
+	suseconds_t time_taken;
+  
+    time_taken = end.tv_usec - start.tv_usec;
+	time_taken = (time_taken + (end.tv_usec - start.tv_usec));
+
+	std::cout << "( " << std::fixed
+         << time_taken << std::setprecision(2);
+    std::cout << " microsec )" << std::endl;
+}
+
+void	test_it(void (*ft)(void), std::string title)
+{
+	std::cout << std::endl;
+	test_header(title);
+
+	struct timeval start, end;
+    gettimeofday(&start, NULL);
+	ft();
+	gettimeofday(&end, NULL);
+	print_timestamp(start, end);
+
+	std::cout << std::endl;
 }
 
 
