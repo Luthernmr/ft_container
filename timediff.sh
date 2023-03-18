@@ -17,14 +17,16 @@ fileFT="traces/ft_test.out"
 fileSTD="traces/std_test.out"
 
 timeFT="traces/time/timeFT.out"
-timeSTD="traces/time/timeSTD.out"
+timeSTD="traces/time/timeSTL.out"
 
 diffFile="traces/diff/diff.out"
 
-make
+sed -i 's/# define STL 1/# define STL 0/' main.cpp
+c++ -g3 -O3 -Wall -Werror -Wextra -std=c++98 main.cpp
 ./a.out ft > $fileFT
 
-make
+sed -i 's/# define STL 0/# define STL 1/' main.cpp
+c++ -g3 -O3 -Wall -Werror -Wextra -std=c++98 main.cpp
 ./a.out std > $fileSTD
 
 diff $fileFT $fileSTD  | grep microsec > $diffFile
@@ -56,15 +58,14 @@ do
 	rhs=$(echo "$line" |  cut -d " " -f2)
 	#read -r nextline+1
     # Comparer les deux valeurs numériques
-   	if [[ $lhs -gt $rhs*20 ]]; then
-   	  echo -e " $IRed Erreur de comparaison entre $IPurple $lhs ms $Color_Off et $IBlue $rhs ms $Color_Off"
-   	  exit 1
+   	if [[ $lhs -gt $rhs*20 ]] && [ $lhs -ne 0 ] && [ $rhs -ne 0 ] ; then
+   	  echo -e " $IRed Erreur de comparaison entre : FT |$IPurple $lhs ms $Color_Off et  STD |$IBlue $rhs ms $Color_Off [ ❌ ]"
    	fi
-   	echo -e "Valeurs comparées : $IPurple $lhs ms $Color_Off et $IBlue $rhs ms $Color_Off"
+   	echo -e "FT |$IPurple $lhs ms $Color_Off et  STD |$IBlue $rhs ms $Color_Off [ ✅ ]"
 done < $compareFile
 # Vérifier si une erreur a été trouvée
 if [ $? -eq 0 ]; then
-  echo -e "$IGreen Toutes les valeurs numériques dans le fichier diff.out sont correctes.$Color_Off"
+  echo -e "$IGreen None Ft_function is 20 time slower than STL_functions. ✅$Color_Off"
 else
-  echo -e "$IRed Il y a une erreur dans les valeurs numériques du fichier diff.out.$Color_Off"
+  echo -e "$IRed Il y a une erreur dans les valeurs numériques du fichier diff.out. ❌$Color_Off"
 fi

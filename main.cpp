@@ -1,6 +1,9 @@
 #include <iostream>
 #include <string>
 #include <deque>
+# include <iostream>
+# include <iomanip>
+# include <sys/time.h>
 
 #ifndef STL
 # define STL 0
@@ -49,6 +52,60 @@ public:
 	iterator end() { return this->c.end(); }
 };
 
+void	test_header(std::string title)
+{
+	std::cout << "---------------------------\n";
+	int space = (20 - title.length()) / 2;
+	std::cout << "----";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "\x1B[33m" << title << "\033[0m";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "----";
+    std::cout << "\n---------------------------\n";
+}
+
+void	container_header(std::string title)
+{
+	std::cout << "---------------------------\n";
+	int space = (20 - title.length()) / 2;
+	std::cout << "----";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "\x1B[31m" << title << "\033[0m";
+	for (int i = 0; i < space; i += 1)
+		std::cout << " ";
+	std::cout << "----";
+    std::cout << "\n---------------------------\n";
+}
+
+void	print_timestamp(struct timeval start, struct timeval end)
+{
+	suseconds_t time_taken;
+  
+    time_taken = end.tv_usec - start.tv_usec;
+	time_taken = (time_taken + (end.tv_usec - start.tv_usec));
+
+	std::cout << "( " << std::fixed
+         << time_taken << std::setprecision(2);
+    std::cout << " microsec )" << std::endl;
+}
+
+void	test_it(void (*ft)(void), std::string title)
+{
+	std::cout << std::endl;
+	test_header(title);
+
+	struct timeval start, end;
+    gettimeofday(&start, NULL);
+	ft();
+	gettimeofday(&end, NULL);
+	print_timestamp(start, end);
+
+	std::cout << std::endl;
+}
+
 void subject_tests( )
 {
 	ft::vector<std::string> vector_str;
@@ -95,10 +152,10 @@ void subject_tests( )
 		int access = rand();
 		sum += map_int[access];
 	}
-	//std::cout << "should be constant with the same seed: " << sum << std::endl;
-	//{
-	//	ft::map<int, int> copy = map_int;
-	//}
+	std::cout << "should be constant with the same seed: " << sum << std::endl;
+	{
+		ft::map<int, int> copy = map_int;
+	}
 	MutantStack<char> iterable_stack;
 	for (char letter = 'a'; letter <= 'z'; letter++)
 		iterable_stack.push(letter);
@@ -920,6 +977,7 @@ namespace stackt
 		std::cout << "Popping out elements...";
 		while (!mystack.empty())
 		{
+
 			std::cout << ' ' << mystack.top();
 			mystack.pop();
 		}
@@ -1015,59 +1073,6 @@ void	stack_tests(void)
 	//test_it(stack::ft_swaps, "swap (stack)");
 }
 
-void	test_header(std::string title)
-{
-	std::cout << "---------------------------\n";
-	int space = (20 - title.length()) / 2;
-	std::cout << "----";
-	for (int i = 0; i < space; i += 1)
-		std::cout << " ";
-	std::cout << "\x1B[33m" << title << "\033[0m";
-	for (int i = 0; i < space; i += 1)
-		std::cout << " ";
-	std::cout << "----";
-    std::cout << "\n---------------------------\n";
-}
-
-void	container_header(std::string title)
-{
-	std::cout << "---------------------------\n";
-	int space = (20 - title.length()) / 2;
-	std::cout << "----";
-	for (int i = 0; i < space; i += 1)
-		std::cout << " ";
-	std::cout << "\x1B[31m" << title << "\033[0m";
-	for (int i = 0; i < space; i += 1)
-		std::cout << " ";
-	std::cout << "----";
-    std::cout << "\n---------------------------\n";
-}
-
-void	print_timestamp(struct timeval start, struct timeval end)
-{
-	suseconds_t time_taken;
-  
-    time_taken = end.tv_usec - start.tv_usec;
-	time_taken = (time_taken + (end.tv_usec - start.tv_usec));
-
-	std::cout << "( " << std::fixed
-         << time_taken << std::setprecision(2);
-    std::cout << " microsec )" << std::endl;
-}
-
-void	test_it(void (*ft)(void), std::string title)
-{
-	std::cout << std::endl;
-	test_header(title);
-
-	struct timeval start, end;
-    gettimeofday(&start, NULL);
-	ft();
-	gettimeofday(&end, NULL);
-	print_timestamp(start, end);
-
-	std::cout << std::endl;
-}
 
 
 int main(int argc, char** argv)
