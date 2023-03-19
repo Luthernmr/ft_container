@@ -1,9 +1,9 @@
 #include <iostream>
 #include <string>
 #include <deque>
-# include <iostream>
-# include <iomanip>
-# include <sys/time.h>
+#include <sys/time.h>
+#include <iostream>
+#include <iomanip>
 
 #ifndef STL
 # define STL 1
@@ -177,7 +177,7 @@ namespace vectort
 
 		// the iterator constructor can also be used to construct from arrays:
 		int myints[] = {16,2,77,29};
-		ft::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
+		ft::vector<int> fifth(myints, myints + sizeof(myints) / sizeof(int));
 
 		std::cout << "The contents of fifth are:\n";
 		for (ft::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
@@ -187,8 +187,8 @@ namespace vectort
 
 	void	ft_operator_equal(void)
 	{
-		ft::vector<int> foo (3,0);
-		ft::vector<int> bar (5,0);
+		ft::vector<int> foo(3,0);
+		ft::vector<int> bar(5,0);
 
 		bar = foo;
 		foo = ft::vector<int>();
@@ -210,7 +210,7 @@ namespace vectort
 
 	void	ft_rbegin_rend(void)
 	{
-		ft::vector<int> myvector (5);  // 5 default-constructed ints
+		ft::vector<int> myvector(5);  // 5 default-constructed ints
 
 		int i=0;
 
@@ -286,7 +286,7 @@ namespace vectort
 	static void	ft_empty(void)
 	{
 		ft::vector<int> myvector;
-		int sum (0);
+		int sum(0);
 
 		for (int i=1;i<=10;i++) myvector.push_back(i);
 
@@ -355,7 +355,7 @@ namespace vectort
 
 	void	ft_at(void)
 	{
-		ft::vector<int> myvector (10);   // 10 zero-initialized ints
+		ft::vector<int> myvector(10);   // 10 zero-initialized ints
 
 		// assign some values:
 		for (unsigned i=0; i<myvector.size(); i++)
@@ -405,7 +405,7 @@ namespace vectort
 		ft::vector<int> second;
 		ft::vector<int> third;
 
-		first.assign (7,100);             // 7 ints with a value of 100
+		first.assign(7,100);             // 7 ints with a value of 100
 
 		ft::vector<int>::iterator it;
 		it=first.begin()+1;
@@ -413,7 +413,7 @@ namespace vectort
 		second.assign (it,first.end()-1); // the 5 central values of first
 
 		int myints[] = {1776,7,4};
-		third.assign (myints,myints+3);   // assigning from array.
+		third.assign(myints,myints+3);   // assigning from array.
 
 		std::cout << "Size:\n" << int (first.size()) << ", " << int (second.size()) << ", " << int (third.size());
 		std::cout << std::endl;
@@ -433,9 +433,9 @@ namespace vectort
 	{
 		ft::vector<int> myvector;
 		int sum (0);
-		myvector.push_back (100);
-		myvector.push_back (200);
-		myvector.push_back (300);
+		myvector.push_back(100);
+		myvector.push_back(200);
+		myvector.push_back(300);
 
 		while (!myvector.empty())
 		{
@@ -449,22 +449,22 @@ namespace vectort
 
 	static void	ft_insert(void)
 	{
-		ft::vector<int> myvector (3,100);
+		ft::vector<int> myvector(3,100);
 		ft::vector<int>::iterator it;
 
 		it = myvector.begin();
-		it = myvector.insert ( it , 200 );
+		it = myvector.insert( it , 200 );
 
-		myvector.insert (it,2,300);
+		myvector.insert(it,2,300);
 
 		// "it" no longer valid, get a new one:
 		it = myvector.begin();
 
-		ft::vector<int> anothervector (2,400);
-		myvector.insert (it+2,anothervector.begin(),anothervector.end());
+		ft::vector<int> anothervector(2,400);
+		myvector.insert(it+2,anothervector.begin(),anothervector.end());
 
 		int myarray [] = { 501,502,503 };
-		myvector.insert (myvector.begin(), myarray, myarray+3);
+		myvector.insert(myvector.begin(), myarray, myarray+3);
 
 		std::cout << "myvector contains:\n";
 		for (it=myvector.begin(); it<myvector.end(); it++)
@@ -480,10 +480,10 @@ namespace vectort
 		for (int i=1; i<=10; i++) myvector.push_back(i);
 
 		// erase the 6th element
-		myvector.erase (myvector.begin()+5);
+		myvector.erase(myvector.begin()+5);
 
 		// erase the first 3 elements:
-		myvector.erase (myvector.begin(),myvector.begin()+3);
+		myvector.erase(myvector.begin(),myvector.begin()+3);
 
 		std::cout << "myvector contains:\n";
 		for (unsigned i=0; i<myvector.size(); ++i)
@@ -493,8 +493,8 @@ namespace vectort
 
 	static void	ft_swap(void)
 	{
-		ft::vector<int> foo (3,100);   // three ints with a value of 100
-		ft::vector<int> bar (5,200);   // five ints with a value of 200
+		ft::vector<int> foo(3,100);   // three ints with a value of 100
+		ft::vector<int> bar(5,200);   // five ints with a value of 200
 
 		foo.swap(bar);
 
@@ -663,11 +663,11 @@ namespace mapt
 		ft::map<char,int> mymap;
 
 		// first insert function version (single parameter):
-		mymap.insert ( ft::pair<char,int>('a',100) );
-		mymap.insert ( ft::pair<char,int>('z',200) );
+		mymap.insert( ft::pair<char,int>('a',100) );
+		mymap.insert( ft::pair<char,int>('z',200) );
 
 		ft::pair<ft::map<char,int>::iterator,bool> ret;
-		ret = mymap.insert ( ft::pair<char,int>('z',500) );
+		ret = mymap.insert( ft::pair<char,int>('z',500) );
 		if (ret.second==false) {
 			std::cout << "element 'z' already existed";
 			std::cout << " with a value of " << ret.first->second << '\n';
@@ -675,8 +675,8 @@ namespace mapt
 
 		// second insert function version (with hint position):
 		ft::map<char,int>::iterator it = mymap.begin();
-		mymap.insert (it, ft::pair<char,int>('b',300));  // max efficiency inserting
-		mymap.insert (it, ft::pair<char,int>('c',400));  // no max efficiency inserting
+		mymap.insert(it, ft::pair<char,int>('b',300));  // max efficiency inserting
+		mymap.insert(it, ft::pair<char,int>('c',400));  // no max efficiency inserting
 
 		//third insert function version (range insertion):
 		ft::map<char,int> anothermap;
@@ -724,10 +724,10 @@ namespace mapt
 		it = mymap.find('b');
 		mymap.erase(it);                   // erasing by iterator
 
-		mymap.erase ('c');                  // erasing by key
+		mymap.erase('c');                  // erasing by key
 
-		it=mymap.find ('e');
-		mymap.erase ( it, mymap.end() );    // erasing by range
+		it=mymap.find('e');
+		mymap.erase( it, mymap.end() );    // erasing by range
 
 		// show content:
 		for (it=mymap.begin(); it!=mymap.end(); ++it)
@@ -866,8 +866,8 @@ namespace mapt
 		mymap['d']=80;
 		mymap['e']=100;
 
-		itlow=mymap.lower_bound ('b');  // itlow points to b
-		itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+		itlow=mymap.lower_bound('b');  // itlow points to b
+		itup=mymap.upper_bound('d');   // itup points to e (not d!)
 
 		mymap.erase(itlow,itup);        // erases [itlow,itup)
 
@@ -896,19 +896,19 @@ namespace mapt
 
 	void	ft_allocator(void)
 	{
-		//int psize;
-		//ft::map<char,int> mymap;
-		//ft::pair<const char,int>* p;
-//
-		//// allocate an array of 5 elements using mymap's allocator:
-		//p=mymap.get_allocator().allocate(5);
-//
-		//// assign some values to array
-		//psize = sizeof(ft::map<char,int>::value_type)*5;
-//
-		std::cout << "The allocated array has a size of  bytes.\n";
-//
-		//mymap.get_allocator().deallocate(p,5);
+		int psize;
+		ft::map<char,int> mymap;
+		ft::pair<const char,int>* p;
+
+		// allocate an array of 5 elements using mymap's allocator:
+		p=mymap.get_allocator().allocate(5);
+
+		// assign some values to array
+		psize = sizeof(ft::map<char,int>::value_type)*5;
+
+		std::cout << "The allocated array has a size of " << psize << " bytes.\n";
+
+		mymap.get_allocator().deallocate(p,5);
 	}
 }
 
@@ -916,7 +916,7 @@ namespace stackt
 {
 	static void	ft_constructor(void)
 	{
-		ft::vector<int> myvector (2,200);        // vector with 2 elements
+		ft::vector<int> myvector(2,200);        // vector with 2 elements
 
 		ft::stack<int> first;                    // empty stack
 

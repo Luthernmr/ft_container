@@ -60,11 +60,8 @@ namespace ft
 
 			vector &operator=(const vector &obj)
 			{
-				if (obj.capacity() > 0)
-				{
-					reserve(obj.capacity());
-					assign(obj.begin(), obj.end());
-				}
+				assign(obj.begin(), obj.end());
+				_size = obj._size;
 				return (*this);
 			}
 			/* -------------------------------- Iterator -------------------------------- */

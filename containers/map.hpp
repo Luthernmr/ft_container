@@ -11,7 +11,7 @@
 
 namespace ft
 {
-	template < class Key,  class T, class Compare = std::less<Key>, class Alloc = std::allocator<Node<ft::pair<const Key, T> > > >
+	template < class Key,  class T, class Compare = std::less<Key>, class Alloc = std::allocator<ft::pair<const Key, T>  > >
 	class map
 	{
 		public:
@@ -20,6 +20,7 @@ namespace ft
         	typedef ft::pair<const key_type, mapped_type> 												value_type;
         	typedef Compare 																			key_compare;
         	typedef Alloc																				allocator_type; 
+			typedef typename allocator_type::template rebind<Node<value_type> >::other					node_allocator_type;
 
 		private:
 			typedef	ft::Node<value_type>																node_type;
@@ -27,7 +28,7 @@ namespace ft
 			key_compare																					_keycomp;
 			node_ptr																					_end_ptr;
 			size_t																						_size;
-			allocator_type																				_alloc;
+			node_allocator_type																			_alloc;
 
 
 		public:
