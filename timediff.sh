@@ -22,12 +22,12 @@ timeSTD="traces/time/timeSTL.out"
 diffFile="traces/diff/diff.out"
 
 sed -i 's/# define STL 1/# define STL 0/' main.cpp
-c++ -g3 -O3 -Wall -Werror -Wextra -std=c++98 main.cpp
-./a.out ft > $fileFT
+make
+./ft_container ft > $fileFT
 
 sed -i 's/# define STL 0/# define STL 1/' main.cpp
-c++ -g3 -O3 -Wall -Werror -Wextra -std=c++98 main.cpp
-./a.out std > $fileSTD
+make
+./ft_container std > $fileSTD
 
 diff $fileFT $fileSTD  | grep microsec > $diffFile
 

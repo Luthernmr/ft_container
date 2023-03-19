@@ -36,6 +36,7 @@
 		"map": "cpp",
 		"cstddef": "cpp",
 		"ctime": "cpp",
-		"stack": "cpp"
+		"stack": "cpp",
+		"iomanip": "cpp"
 	}
 }

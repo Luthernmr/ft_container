@@ -1,36 +1,39 @@
 CC = c++
-
 CC_FLAGS = -Wall -Werror -Wextra -std=c++98 #-fsanitize=address
+NAME = ft_container
+SRCS = main.cpp
+OBJS = $(SRCS:.cpp=.o)
+OBJS_DIR = objs/
+CONTAINERS_DIR = containers/
+INC_DIR = includes/
+IT_DIR = iterator/
+OBJS_PREFIX = $(addprefix $(OBJS_DIR), $(OBJS))
+#HEADERS = $(shell find -type f -name "*.hpp" | rev | cut -d '/' -f 1 | rev)
 
-NAME := ft_container
-	
-SRCS := $(shell find -type f -name "*.cpp") # | rev | cut -d '/' -f 1 | rev
+$(OBJS_DIR):
+	@mkdir -p $(OBJS_DIR)
 
-HPPFILES = $(shell find -type f -name "*.hpp")
+all: $(NAME)
 
+$(OBJS_DIR)%.o: %.cpp Makefile $(OBJS_DIR)
+				$(CC) $(CC_FLAGS) -c $< -o $@
+				@printf "\033[2K\r\033[0;32m[BUILD]\033[0m $(NAME)\n"
 
-OBJS := $(SRCS:.cpp=.o)
+$(NAME): $(OBJS_PREFIX)
+	$(CC) $(CC_FLAGS) $^ -o $(NAME)
+	@printf "\033[2K\r\033[0;32m[END]\033[0m $(NAME)\n"
 
+clean:
+	rm -rf $(OBJS_DIR)
+	@printf "\033[2K\r\033[0;32m[CLEAN]\033[0m done\n"
 
-all : $(NAME)
+fclean: clean
+	rm -f $(NAME)
+	@printf "\033[2K\r\033[0;32m[FCLEAN]\033[0m done\n"
 
-$(NAME) : 	%.cpp  Makefile $(CPPFILES)
-			@mkdir -p objs
-			$(CC) $(CC_FLAGS) -c $< -o $(NAME)
+re: fclean all
 
+time:
+	@bash timediff.sh
 
-objs%.o:	%.cpp  Makefile $(HPPFILES)
-			@mkdir -p objs
-			$(CC) $(CC_FLAGS) -c $< -o $(NAME)
-
-clean :
-		rm -rf objs
-
-fclean : clean
-		rm -f $(NAME)
-
-re : fclean all
-
-test : $(shell bash test.sh)
-
-.PHONY : re clean fclean all .PHONY
+.PHONY: all clean fclean re

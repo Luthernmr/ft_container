@@ -6,7 +6,7 @@
 # include <sys/time.h>
 
 #ifndef STL
-# define STL 0
+# define STL 1
 #endif
 
 #if STL //CREATE A REAL STL EXAMPLE
@@ -98,7 +98,7 @@ void	test_it(void (*ft)(void), std::string title)
 	test_header(title);
 
 	struct timeval start, end;
-    gettimeofday(&start, NULL);
+  	gettimeofday(&start, NULL);
 	ft();
 	gettimeofday(&end, NULL);
 	print_timestamp(start, end);
