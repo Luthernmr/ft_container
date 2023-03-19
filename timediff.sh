@@ -10,16 +10,14 @@ IPurple='\033[0;95m'      # Purple
 ICyan='\033[0;96m'        # Cyan
 IWhite='\033[0;97m'       # White
 
-mkdir -p traces/diff
-mkdir -p traces/time
-
 fileFT="traces/ft_test.out"
 fileSTD="traces/std_test.out"
 
 timeFT="traces/time/timeFT.out"
 timeSTD="traces/time/timeSTL.out"
 
-diffFile="traces/diff/diff.out"
+diffFile="traces/diff/diffValue.out"
+diffTime="traces/diff/diffTime.out"
 
 sed -i 's/# define STL 1/# define STL 0/' main.cpp
 make
@@ -29,18 +27,18 @@ sed -i 's/# define STL 0/# define STL 1/' main.cpp
 make
 ./ft_container std > $fileSTD
 
-diff $fileFT $fileSTD  | grep microsec > $diffFile
+diff $fileFT $fileSTD > $diffFile
+
+diff $fileFT $fileSTD  | grep microsec > $diffTime
 
 
-cat $fileFT | grep "microsec" > $timeFT
-cat $fileSTD | grep "microsec" > $timeSTD
 
 count=1
 rm traces/diff/compare.in
 touch traces/diff/compare.in
 compareFile=traces/diff/compare.in
 
-cat $diffFile | while read -r line;
+cat $diffTime | while read -r line;
 do
 	current=$(echo "$line" | sed 's/[^0-9]*//g')
 	if [ $((count % 2)) -eq 1 ]; then
@@ -49,7 +47,7 @@ do
 		echo "$current" >> $compareFile
 	fi
 	count=$((count+1))
-done < $diffFile
+done < $diffTime
 
 while read -r line;
 do
@@ -59,9 +57,9 @@ do
 	#read -r nextline+1
     # Comparer les deux valeurs numériques
    	if [[ $lhs -gt $rhs*20 ]] && [ $lhs -ne 0 ] && [ $rhs -ne 0 ] ; then
-   	  echo -e " $IRed Erreur de comparaison entre : FT |$IPurple $lhs ms $Color_Off et  STD |$IBlue $rhs ms $Color_Off [ ❌ ]"
+   	  echo -e " $IRed Erreur de comparaison entre : FT |$IPurple $lhs ms $Color_Off 	et  STD |$IBlue $rhs ms $Color_Off 	[ ❌ ]"
    	fi
-   	echo -e "FT |$IPurple $lhs ms $Color_Off et  STD |$IBlue $rhs ms $Color_Off [ ✅ ]"
+   	echo -e "FT |$IPurple $lhs ms $Color_Off 	et  STD |$IBlue $rhs ms $Color_Off 	[ ✅ ]"
 done < $compareFile
 # Vérifier si une erreur a été trouvée
 if [ $? -eq 0 ]; then
