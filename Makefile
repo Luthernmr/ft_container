@@ -5,7 +5,7 @@
 NAME 			=	ft_container
 
 CC 				=	c++
-CC_FLAGS 		=	-Wall -Werror -Wextra -std=c++98 #-fsanitize=address
+CC_FLAGS 		=	-Wall -Werror -Wextra -std=c++98 -fsanitize=address
 
 SRCS 			=	main.cpp
 OBJS 			=	$(SRCS:.cpp=.o)
