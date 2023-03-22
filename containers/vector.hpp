@@ -56,7 +56,11 @@ namespace ft
 				*this = obj; 
 			};
 
-			~vector(void) {}
+			~vector(void) 
+			{
+				clear();
+				_myAlloc.deallocate(_array, _capacity);
+			}
 
 			vector &operator=(const vector &obj)
 			{
@@ -137,6 +141,13 @@ namespace ft
 					_myAlloc.deallocate(_array, _capacity);
 				_array = tmp_array;
 				_capacity = new_cap;
+				for (size_type i = 0; i < _size; i++)
+				{
+					_myAlloc.destroy(tmp_array + i);
+				}
+				//if(tmp_array)
+				//	_myAlloc.deallocate(tmp_array, new_cap);
+
 			}
 
 			iterator	insert(iterator position, const_reference val)

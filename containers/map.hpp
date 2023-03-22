@@ -97,7 +97,11 @@ namespace ft
 				*this = obj;
 			}
 
-			~map() {clear();}
+			~map()
+			{
+				clear();
+				_alloc.deallocate(_end_ptr, 1);
+			}
 
 			map& operator=(const map& obj)
 			{
