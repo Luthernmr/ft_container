@@ -94,8 +94,7 @@ namespace ft
 
 			template <class InputIterator>
 			void assign(typename ft::enable_if
-			<!ft::is_integral<InputIterator>::value, InputIterator>::type first,
-			 InputIterator last)
+			<!ft::is_integral<InputIterator>::value, InputIterator>::type first, InputIterator last)
 			{
 				clear();
 				for (; first != last; ++first)
